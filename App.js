@@ -1,6 +1,8 @@
 import React from 'react';
-import { Text } from 'react-native';
+import { Text, NetInfo } from 'react-native';
 import styled from 'styled-components';
+
+import PopupTopBar from './src/components/common/PopupTopBar';
 
 const Container = styled.View`
     flex: 1;
@@ -14,49 +16,83 @@ const Title = styled.Text`
     margin-bottom: 10px;
 `;
 
-const RefreshText = styled.Text`
+const ErrorText = styled.Text`
     margin-top: 10px;
+    color: red;
 `;
 
 export default class App extends React.Component {
-    constructor() {
-        super();
+  constructor() {
+    super();
 
-        this.state = {
-            lat: 0,
-            lon: 0,
-            counter: 100,
-        };
-    }
+    this.state = {
+      lat: 0,
+      lon: 0,
+      error: null,
+      online: null,
+    };
+  }
 
-    componentDidUpdate() {
-        if (this.state.counter <= 0) {
-            navigator.geolocation.getCurrentPosition(({ coords }) => {
-                this.setState({
-                    lat: coords.latitude,
-                    lon: coords.longitude,
-                    counter: 100,
-                });
-            });
-        }
-    }
+  componentDidMount() {
+    NetInfo.isConnected.addEventListener('connectionChange', this.onConnectionChange);
 
-    componentDidMount() {
-        setInterval(() => {
-            this.setState(state => ({
-                counter: state.counter - 1,
-            }));
-        });
-    }
+    this.watchId = navigator.geolocation.watchPosition(
+      this.watchPositionSuccess,
+      this.watchPositionError,
+      {
+        timeout: 1000,
+        enableHighAccuracy: true,
+      },
+    );
+  }
 
-    render() {
-        return (
-            <Container>
-                <Title>Location</Title>
-                <Text>lat: {this.state.lat}</Text>
-                <Text>lon: {this.state.lon}</Text>
-                <RefreshText>Refesh in {this.state.counter}ms</RefreshText>
-            </Container>
-        );
+  componentWillUnmount() {
+    navigator.geolocation.clearWatch(this.watchId);
+    NetInfo.isConnected.removeEventListener('connectionChange', this.onConnectionChange);
+  }
+
+  onConnectionChange = (connected) => {
+    console.log(connected);
+
+    if (!connected && this.state.online) {
+      this.setState({ online: false });
+    } else if (connected && !this.state.online) {
+      this.setState({ online: true });
     }
+  };
+
+  watchPositionSuccess = ({ coords }) => {
+    this.setState({
+      lat: coords.latitude,
+      lon: coords.longitude,
+    });
+  };
+
+  watchPositionError = (err) => {
+    this.setState({
+      error: err,
+    });
+  };
+
+  render() {
+    const { error, lat, lon, online } = this.state;
+
+    return (
+      <Container>
+        {online === false && (
+          <PopupTopBar type="error">
+            You are offline.
+          </PopupTopBar>
+        )}
+
+        <Title>Location</Title>
+        <Text>lat: {lat}</Text>
+        <Text>lon: {lon}</Text>
+
+        {error && (
+          <ErrorText>Error: {error}</ErrorText>
+        )}
+      </Container>
+    );
+  }
 }
