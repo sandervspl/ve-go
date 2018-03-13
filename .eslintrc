@@ -8,6 +8,9 @@
     "browser": true
   },
   "rules": {
-    "react/jsx-filename-extension": [0]
+    "no-confusing-arrow": [0],
+    "object-curly-newline": [0],
+    "react/jsx-filename-extension": [0],
+    "react/require-default-props": [0]
   }
 }
