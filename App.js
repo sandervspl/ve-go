@@ -5,20 +5,22 @@ import styled from 'styled-components';
 import PopupTopBar from './src/components/common/PopupTopBar';
 
 const Container = styled.View`
-    flex: 1;
-    background-color: #fff;
-    align-items: center;
-    justify-content: center;
+  position: relative;
+  margin-top: 20px;
+  flex: 1;
+  background-color: #fff;
+  align-items: center;
+  justify-content: center;
 `;
 
 const Title = styled.Text`
-    font-size: 20px;
-    margin-bottom: 10px;
+  font-size: 20px;
+  margin-bottom: 10px;
 `;
 
 const ErrorText = styled.Text`
-    margin-top: 10px;
-    color: red;
+  margin-top: 10px;
+  color: red;
 `;
 
 export default class App extends React.Component {
@@ -52,8 +54,6 @@ export default class App extends React.Component {
   }
 
   onConnectionChange = (connected) => {
-    console.log(connected);
-
     if (!connected && this.state.online) {
       this.setState({ online: false });
     } else if (connected && !this.state.online) {

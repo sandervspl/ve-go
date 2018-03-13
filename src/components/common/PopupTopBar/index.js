@@ -5,7 +5,7 @@ import styled from 'styled-components';
 const Container = styled.View`
   flex: 1;
   position: absolute;
-  top: 20px;
+  top: 0;
   left: 0;
   padding: 15px;
   width: 100%;
