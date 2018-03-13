@@ -1,14 +1,20 @@
 import React from 'react';
-import { Text, NetInfo } from 'react-native';
+import { View, Text, NetInfo, ActivityIndicator } from 'react-native';
 import styled from 'styled-components';
 
 import PopupTopBar from './src/components/common/PopupTopBar';
 
 const Container = styled.View`
+  flex: 1;
+  align-items: center;
+  justify-content: center;
   position: relative;
   margin-top: 20px;
-  flex: 1;
   background-color: #fff;
+`;
+
+const LocationContainer = styled.View`
+  flex: 1;
   align-items: center;
   justify-content: center;
 `;
@@ -32,6 +38,7 @@ export default class App extends React.Component {
       lon: 0,
       error: null,
       online: null,
+      loading: true,
     };
   }
 
@@ -54,11 +61,10 @@ export default class App extends React.Component {
   }
 
   onConnectionChange = (connected) => {
-    if (!connected && this.state.online) {
-      this.setState({ online: false });
-    } else if (connected && !this.state.online) {
-      this.setState({ online: true });
-    }
+    this.setState(state => ({
+      online: connected && !state.online,
+      loading: false,
+    }));
   };
 
   watchPositionSuccess = ({ coords }) => {
@@ -75,7 +81,7 @@ export default class App extends React.Component {
   };
 
   render() {
-    const { error, lat, lon, online } = this.state;
+    const { error, lat, lon, online, loading } = this.state;
 
     return (
       <Container>
@@ -85,9 +91,15 @@ export default class App extends React.Component {
           </PopupTopBar>
         )}
 
-        <Title>Location</Title>
-        <Text>lat: {lat}</Text>
-        <Text>lon: {lon}</Text>
+        {loading ? (
+          <ActivityIndicator />
+        ) : (
+          <LocationContainer>
+            <Title>Location</Title>
+            <Text>lat: {lat}</Text>
+            <Text>lon: {lon}</Text>
+          </LocationContainer>
+        )}
 
         {error && (
           <ErrorText>Error: {error}</ErrorText>
