@@ -1,33 +1,8 @@
 import React from 'react';
-import { View, Text, NetInfo, ActivityIndicator } from 'react-native';
-import styled from 'styled-components';
+import { Text, NetInfo, ActivityIndicator } from 'react-native';
+import * as c from './src/components/common';
 
 import PopupTopBar from './src/components/common/PopupTopBar';
-
-const Container = styled.View`
-  flex: 1;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-  margin-top: 20px;
-  background-color: #fff;
-`;
-
-const LocationContainer = styled.View`
-  flex: 1;
-  align-items: center;
-  justify-content: center;
-`;
-
-const Title = styled.Text`
-  font-size: 20px;
-  margin-bottom: 10px;
-`;
-
-const ErrorText = styled.Text`
-  margin-top: 10px;
-  color: red;
-`;
 
 export default class App extends React.Component {
   constructor() {
@@ -61,16 +36,9 @@ export default class App extends React.Component {
   }
 
   onConnectionChange = (connected) => {
-    this.setState(state => ({
-      online: connected && !state.online,
-      loading: false,
-    }));
-  };
-
-  watchPositionSuccess = ({ coords }) => {
     this.setState({
-      lat: coords.latitude,
-      lon: coords.longitude,
+      online: connected,
+      loading: false,
     });
   };
 
@@ -80,31 +48,44 @@ export default class App extends React.Component {
     });
   };
 
+  watchPositionSuccess = ({ coords }) => {
+    this.setState({
+      lat: coords.latitude,
+      lon: coords.longitude,
+    });
+  };
+
   render() {
     const { error, lat, lon, online, loading } = this.state;
 
     return (
-      <Container>
-        {online === false && (
-          <PopupTopBar type="error">
-            You are offline.
-          </PopupTopBar>
-        )}
+      <c.Main>
+        <c.Container>
+          {online === false && (
+            <PopupTopBar type="error">
+              You are offline.
+            </PopupTopBar>
+          )}
 
-        {loading ? (
-          <ActivityIndicator />
-        ) : (
-          <LocationContainer>
-            <Title>Location</Title>
-            <Text>lat: {lat}</Text>
-            <Text>lon: {lon}</Text>
-          </LocationContainer>
-        )}
+          {loading ? (
+            <ActivityIndicator />
+          ) : (
+            <c.CenterContainer>
+              <c.Title>Location</c.Title>
+              <Text>lat: {lat}</Text>
+              <Text>lon: {lon}</Text>
+            </c.CenterContainer>
+          )}
 
-        {error && (
-          <ErrorText>Error: {error}</ErrorText>
-        )}
-      </Container>
+          {error && (
+            <c.ErrorText>Error: {error}</c.ErrorText>
+          )}
+
+          <c.TextButton onPress={() => this.setModalVisible(true)}>
+            <Text>Open Modal</Text>
+          </c.TextButton>
+        </c.Container>
+      </c.Main>
     );
   }
 }
