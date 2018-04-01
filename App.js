@@ -65,18 +65,22 @@ export default class App extends React.Component {
 
       if (data.error) {
         console.error(data);
+
         this.setState({
           loading: false,
           error: data.error,
         });
       } else if (data.response && data.response.venues) {
+        const sortedByDistance = data.response.venues.sort((a, b) => a.location.distance > b.location.distance);
+
         this.setState({
-          restaurantData: this.ds.cloneWithRows(data.response.venues),
+          restaurantData: this.ds.cloneWithRows(sortedByDistance),
           loading: false,
         });
       }
     } catch (e) {
       console.error(e);
+
       this.setState({
         loading: false,
         error: e,
