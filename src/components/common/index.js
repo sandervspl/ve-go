@@ -2,19 +2,18 @@ import styled from 'styled-components';
 
 export const Main = styled.View`
   flex: 1;
-  height: 100%;
   background-color: #fff;
 `;
 
-export const Container = styled.View`
-  flex: 1;
-  align-items: flex-start;
-  justify-content: flex-start;
-  position: relative;
-  margin: 70px 0 0;
-  padding-left: 20px;
-  height: 100%;
-`;
+export const ScrollContainer = styled.ScrollView.attrs({
+  contentContainerStyle: () => ({
+    alignItems: 'flex-start',
+    justifyContent: 'flex-start',
+    position: 'relative',
+    paddingLeft: 20,
+    paddingBottom: 75,
+  }),
+})``; // not a typo!
 
 export const Header = styled.View`
   width: 100%;
@@ -42,6 +41,10 @@ export const TextButton = styled.TouchableHighlight`
   padding: 5px 10px;
   border: 1px solid lightgray;
   border-radius: 5px;
+`;
+
+export const List = styled.View`
+  width: 100%;
 `;
 
 export const ListItem = styled.View`

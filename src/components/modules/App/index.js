@@ -1,20 +1,18 @@
 // dependencies
 import React from 'react';
-import { ListView, ActivityIndicator } from 'react-native';
+import { View, ActivityIndicator } from 'react-native';
 import * as c from '../../common';
 
 class App extends React.Component {
   constructor() {
     super();
 
-    this.ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 });
-
     this.state = {
       lat: 0,
       lon: 0,
       error: null,
       loading: true,
-      restaurantData: this.ds.cloneWithRows([]),
+      restaurantData: [],
     };
   }
 
@@ -64,7 +62,7 @@ class App extends React.Component {
         /* eslint-enable */
 
         this.setState({
-          restaurantData: this.ds.cloneWithRows(sortedByDistance),
+          restaurantData: sortedByDistance,
           loading: false,
         });
       }
@@ -78,11 +76,16 @@ class App extends React.Component {
     }
   };
 
+  handleScroll = (event) => {
+    console.log('243y5rtythg');
+    console.log(event);
+  };
+
   render() {
     const { error, loading, restaurantData } = this.state;
 
     return (
-      <c.Container>
+      <c.ScrollContainer>
         <c.Header>
           <c.HugeTitle>Restaurants</c.HugeTitle>
         </c.Header>
@@ -90,41 +93,41 @@ class App extends React.Component {
         {loading ? (
           <ActivityIndicator />
         ) : (
-          <ListView
-            dataSource={restaurantData}
-            renderRow={(restaurant) => {
-              if (!restaurant) return null;
-
-              return (
+          <c.List>
+            {restaurantData.length === 0 ? null : (
+              restaurantData.map(restaurant => (
                 <c.ListItem key={restaurant.id}>
                   <c.ListItemTitle>{restaurant.name}</c.ListItemTitle>
-                  <c.ListItemText>
-                    {restaurant.location.formattedAddress.reduce(
-                      (fullAddress, address, i) => {
-                        if (i === 0) return address;
-                        return `${fullAddress}, ${address}`;
-                      },
-                      '',
-                    )}
-                  </c.ListItemText>
-                  <c.ListItemText>
-                    {restaurant.categories.reduce((list, category, i) => {
-                      if (i === 0) return category.shortName;
-                      return `${list}, ${category.shortName}`;
-                    }, '')}
-                  </c.ListItemText>
+                  {restaurant.location.formattedAddress && (
+                    <c.ListItemText>
+                      {restaurant.location.formattedAddress.reduce(
+                        (fullAddress, address, i) => {
+                          if (i === 0) return address;
+                          return `${fullAddress}, ${address}`;
+                        },
+                        '',
+                      )}
+                    </c.ListItemText>
+                  )}
+                  {restaurant.categories.length > 0 && (
+                    <c.ListItemText>
+                      {restaurant.categories.reduce((list, category, i) => {
+                        if (i === 0) return category.shortName;
+                        return `${list}, ${category.shortName}`;
+                      }, '')}
+                    </c.ListItemText>
+                  )}
                   <c.ListItemText light>
                     {restaurant.location.distance} meter away
                   </c.ListItemText>
                 </c.ListItem>
-              );
-            }}
-            enableEmptySections
-          />
+              ))
+            )}
+          </c.List>
         )}
 
         {error && <c.ErrorText>Error: {error}</c.ErrorText>}
-      </c.Container>
+      </c.ScrollContainer>
     );
   }
 }

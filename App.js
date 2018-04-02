@@ -1,5 +1,5 @@
 import React from 'react';
-import { NetInfo, TabBarIOS } from 'react-native';
+import { NetInfo, TabBarIOS, NavigatorIOS } from 'react-native';
 import * as m from './src/components/modules';
 import * as c from './src/components/common';
 import PopupTopBar from './src/components/common/PopupTopBar';
@@ -30,7 +30,7 @@ export default class App extends React.Component {
     });
   };
 
-  onTabPress = (id) => {
+  switchToTab = (id) => {
     this.setState({
       activeTab: id,
     });
@@ -48,14 +48,25 @@ export default class App extends React.Component {
         <TabBarIOS>
           <TabBarIOS.Item
             selected={activeTab === 1}
-            onPress={() => this.onTabPress(1)}
-            systemIcon="bookmarks"
+            onPress={() => this.switchToTab(1)}
+            systemIcon="search"
+            style={{ marginBottom: 50 }}
           >
-            <m.App />
+            <NavigatorIOS
+              initialRoute={{
+                component: m.App,
+                title: 'Restaurants',
+              }}
+              style={{ flex: 1 }}
+              barTintColor="#ffffff"
+              shadowHidden
+              translucent
+              titleTextColor="rgba(0,0,0,0)"
+            />
           </TabBarIOS.Item>
           <TabBarIOS.Item
             selected={activeTab === 2}
-            onPress={() => this.onTabPress(2)}
+            onPress={() => this.switchToTab(2)}
             systemIcon="favorites"
           >
             <m.Favorites />

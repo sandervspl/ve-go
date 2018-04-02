@@ -5,8 +5,9 @@ import styled from 'styled-components';
 const Container = styled.View`
   flex: 1;
   position: absolute;
-  top: 0;
+  top: 20px;
   left: 0;
+  z-index: 2;
   padding: 15px;
   width: 100%;
   background-color: ${props => props.type === 'error' ? 'red' : 'lightblue'};

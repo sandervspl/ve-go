@@ -2,11 +2,11 @@ import React from 'react';
 import * as c from '../../common';
 
 const Favorites = () => (
-  <c.Container>
+  <c.ScrollContainer>
     <c.Header>
       <c.HugeTitle>Favorites</c.HugeTitle>
     </c.Header>
-  </c.Container>
+  </c.ScrollContainer>
 );
 
 Favorites.propTypes = {};
