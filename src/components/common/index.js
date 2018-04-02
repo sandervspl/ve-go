@@ -2,16 +2,18 @@ import styled from 'styled-components';
 
 export const Main = styled.View`
   flex: 1;
-  background-color: #eee;
+  height: 100%;
+  background-color: #fff;
 `;
 
 export const Container = styled.View`
   flex: 1;
   align-items: flex-start;
-  justify-content: center;
+  justify-content: flex-start;
   position: relative;
   margin: 70px 0 0;
   padding-left: 20px;
+  height: 100%;
 `;
 
 export const Header = styled.View`
