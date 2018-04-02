@@ -1,5 +1,5 @@
 import React from 'react';
-import { NetInfo, TabBarIOS, NavigatorIOS } from 'react-native';
+import { NetInfo, TabBarIOS } from 'react-native';
 import * as m from './src/components/modules';
 import * as c from './src/components/common';
 
@@ -51,17 +51,7 @@ export default class App extends React.Component {
             systemIcon="search"
             style={{ marginBottom: 50 }}
           >
-            <NavigatorIOS
-              initialRoute={{
-                component: m.Restaurants,
-                title: 'Restaurants',
-              }}
-              style={{ flex: 1 }}
-              barTintColor="#ffffff"
-              shadowHidden
-              translucent
-              titleTextColor="rgba(0,0,0,0)"
-            />
+            <m.Restaurants />
           </TabBarIOS.Item>
           <TabBarIOS.Item
             selected={activeTab === 2}

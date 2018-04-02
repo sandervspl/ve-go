@@ -13,7 +13,7 @@ class RestaurantListItem extends React.Component {
   handlePressOut = () => {
     const { data, onPress } = this.props;
 
-    this.setState({ pressed: false }, () => onPress(data.id));
+    this.setState({ pressed: false }, () => onPress(data));
   };
 
   render() {
