@@ -1,17 +1,20 @@
 import styled from 'styled-components';
 
+export { default as PopupTopBar } from './PopupTopBar';
+
 export const Main = styled.View`
   flex: 1;
   background-color: #fff;
 `;
 
 export const ScrollContainer = styled.ScrollView.attrs({
-  contentContainerStyle: () => ({
+  contentContainerStyle: props => ({
     alignItems: 'flex-start',
     justifyContent: 'flex-start',
     position: 'relative',
     paddingLeft: 20,
     paddingBottom: 75,
+    height: props.fullHeight ? '100%' : 'auto',
   }),
 })``; // not a typo!
 
@@ -19,6 +22,14 @@ export const Header = styled.View`
   width: 100%;
   border-bottom-color: lightgray;
   border-bottom-width: 1px;
+`;
+
+export const CenterView = styled.View`
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
 `;
 
 export const HugeTitle = styled.Text`

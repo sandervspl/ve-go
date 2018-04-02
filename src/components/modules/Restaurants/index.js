@@ -1,15 +1,14 @@
 // dependencies
 import React from 'react';
-import { View, ActivityIndicator } from 'react-native';
+import { ActivityIndicator } from 'react-native';
 import * as c from '../../common';
+import * as mc from './components';
 
 class App extends React.Component {
   constructor() {
     super();
 
     this.state = {
-      lat: 0,
-      lon: 0,
       error: null,
       loading: true,
       restaurantData: [],
@@ -34,11 +33,6 @@ class App extends React.Component {
   };
 
   watchPositionSuccess = async ({ coords }) => {
-    this.setState({
-      lat: coords.latitude,
-      lon: coords.longitude,
-    });
-
     try {
       /* eslint-disable */
       const response = await fetch(
@@ -76,54 +70,21 @@ class App extends React.Component {
     }
   };
 
-  handleScroll = (event) => {
-    console.log('243y5rtythg');
-    console.log(event);
-  };
-
   render() {
     const { error, loading, restaurantData } = this.state;
 
     return (
-      <c.ScrollContainer>
+      <c.ScrollContainer fullHeight={loading}>
         <c.Header>
           <c.HugeTitle>Restaurants</c.HugeTitle>
         </c.Header>
 
         {loading ? (
-          <ActivityIndicator />
+          <c.CenterView>
+            <ActivityIndicator />
+          </c.CenterView>
         ) : (
-          <c.List>
-            {restaurantData.length === 0 ? null : (
-              restaurantData.map(restaurant => (
-                <c.ListItem key={restaurant.id}>
-                  <c.ListItemTitle>{restaurant.name}</c.ListItemTitle>
-                  {restaurant.location.formattedAddress && (
-                    <c.ListItemText>
-                      {restaurant.location.formattedAddress.reduce(
-                        (fullAddress, address, i) => {
-                          if (i === 0) return address;
-                          return `${fullAddress}, ${address}`;
-                        },
-                        '',
-                      )}
-                    </c.ListItemText>
-                  )}
-                  {restaurant.categories.length > 0 && (
-                    <c.ListItemText>
-                      {restaurant.categories.reduce((list, category, i) => {
-                        if (i === 0) return category.shortName;
-                        return `${list}, ${category.shortName}`;
-                      }, '')}
-                    </c.ListItemText>
-                  )}
-                  <c.ListItemText light>
-                    {restaurant.location.distance} meter away
-                  </c.ListItemText>
-                </c.ListItem>
-              ))
-            )}
-          </c.List>
+          <mc.RestaurantList data={restaurantData} />
         )}
 
         {error && <c.ErrorText>Error: {error}</c.ErrorText>}

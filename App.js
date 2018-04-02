@@ -2,7 +2,6 @@ import React from 'react';
 import { NetInfo, TabBarIOS, NavigatorIOS } from 'react-native';
 import * as m from './src/components/modules';
 import * as c from './src/components/common';
-import PopupTopBar from './src/components/common/PopupTopBar';
 
 export default class App extends React.Component {
   state = {
@@ -42,7 +41,7 @@ export default class App extends React.Component {
     return (
       <c.Main>
         {online === false && (
-          <PopupTopBar type="error">You are offline.</PopupTopBar>
+          <c.PopupTopBar type="error">You are offline.</c.PopupTopBar>
         )}
 
         <TabBarIOS>
@@ -54,7 +53,7 @@ export default class App extends React.Component {
           >
             <NavigatorIOS
               initialRoute={{
-                component: m.App,
+                component: m.Restaurants,
                 title: 'Restaurants',
               }}
               style={{ flex: 1 }}
