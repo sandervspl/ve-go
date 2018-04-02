@@ -10,7 +10,7 @@ class App extends React.Component {
       component: m.RestaurantDetail,
       title: name,
       passProps: { id },
-      leftButtonTitle: '',
+      leftButtonTitle: null,
     });
   };
 

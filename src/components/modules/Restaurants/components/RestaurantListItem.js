@@ -11,8 +11,11 @@ class RestaurantListItem extends React.Component {
   handlePressIn = () => this.setState({ pressed: true });
 
   handlePressOut = () => {
-    const { data, onPress } = this.props;
+    this.setState({ pressed: false });
+  };
 
+  handlePress = () => {
+    const { data, onPress } = this.props;
     this.setState({ pressed: false }, () => onPress(data));
   };
 
@@ -24,6 +27,7 @@ class RestaurantListItem extends React.Component {
       <TouchableWithoutFeedback
         onPressIn={this.handlePressIn}
         onPressOut={this.handlePressOut}
+        onPress={this.handlePress}
       >
         <c.ListItem pressed={pressed}>
           <c.ListItemTitle pressed={pressed}>
