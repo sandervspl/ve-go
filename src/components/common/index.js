@@ -1,4 +1,8 @@
 import styled from 'styled-components';
+import { bind } from 'styled-props';
+import * as styles from './styles';
+
+const s = bind(styles);
 
 export { default as PopupTopBar } from './PopupTopBar';
 
@@ -48,29 +52,33 @@ export const ErrorText = styled.Text`
   color: red;
 `;
 
-export const TextButton = styled.TouchableHighlight`
-  padding: 5px 10px;
-  border: 1px solid lightgray;
-  border-radius: 5px;
-`;
-
 export const List = styled.View`
   width: 100%;
 `;
 
 export const ListItem = styled.View`
   padding-bottom: 5px;
-  border-bottom-color: lightgray;
+  border-bottom-color: ${styles.color.lightgray};
   border-bottom-width: 1px;
+  background-color: ${s.listItemBgColor};
 `;
+ListItem.defaultProps = {
+  listItemBgColor: 'default',
+};
 
 export const ListItemText = styled.Text`
   padding-right: 20px;
-  color: ${props => props.light ? 'gray' : 'black'};
+  color: ${s.listItemTextColor};
 `;
+ListItemText.defaultProps = {
+  listItemTextColor: 'default',
+};
 
 export const ListItemTitle = styled(ListItemText)`
   margin-top: 20px;
   font-size: 20px;
-  color: #47b646;
+  color: ${s.listItemTitleColor};
 `;
+ListItemTitle.defaultProps = {
+  listItemTitleColor: 'default',
+};

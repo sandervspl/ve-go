@@ -70,6 +70,10 @@ class App extends React.Component {
     }
   };
 
+  onTouchRestaurant = (id) => {
+    console.log(id);
+  };
+
   render() {
     const { error, loading, restaurantData } = this.state;
 
@@ -84,7 +88,7 @@ class App extends React.Component {
             <ActivityIndicator />
           </c.CenterView>
         ) : (
-          <mc.RestaurantList data={restaurantData} />
+          <mc.RestaurantList data={restaurantData} onTouchRestaurant={this.onTouchRestaurant} />
         )}
 
         {error && <c.ErrorText>Error: {error}</c.ErrorText>}

@@ -1,43 +1,25 @@
 import React from 'react';
 import PT from 'prop-types';
 import * as c from '../../../common';
+import ListItem from './RestaurantListItem';
 
-const RestaurantsList = ({ data }) => (
+const RestaurantsList = ({ data, onTouchRestaurant }) => (
   <c.List>
     {data.length === 0 ? null : (
       data.map(restaurant => (
-        <c.ListItem key={restaurant.id}>
-          <c.ListItemTitle>{restaurant.name}</c.ListItemTitle>
-          {restaurant.location.formattedAddress && (
-            <c.ListItemText>
-              {restaurant.location.formattedAddress.reduce(
-                (fullAddress, address, i) => {
-                  if (i === 0) return address;
-                  return `${fullAddress}, ${address}`;
-                },
-                '',
-              )}
-            </c.ListItemText>
-          )}
-          {restaurant.categories.length > 0 && (
-            <c.ListItemText>
-              {restaurant.categories.reduce((list, category, i) => {
-                if (i === 0) return category.shortName;
-                return `${list}, ${category.shortName}`;
-              }, '')}
-            </c.ListItemText>
-          )}
-          <c.ListItemText light>
-            {restaurant.location.distance} meter away
-          </c.ListItemText>
-        </c.ListItem>
+        <ListItem
+          key={restaurant.id}
+          data={restaurant}
+          onPress={onTouchRestaurant}
+        />
       ))
     )}
   </c.List>
 );
 
 RestaurantsList.propTypes = {
-  data: PT.arrayOf(PT.object),
+  data: PT.arrayOf(PT.object).isRequired,
+  onTouchRestaurant: PT.func.isRequired,
 };
 
 export default RestaurantsList;
