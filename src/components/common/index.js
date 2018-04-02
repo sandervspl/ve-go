@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { bind } from 'styled-props';
+import { default as styledProps, bind } from 'styled-props';
 import * as styles from './styles';
 
 const s = bind(styles);
@@ -16,13 +16,13 @@ export const ScrollContainer = styled.ScrollView.attrs({
     alignItems: 'flex-start',
     justifyContent: 'flex-start',
     position: 'relative',
-    paddingLeft: 20,
     paddingBottom: 75,
     height: props.fullHeight ? '100%' : 'auto',
   }),
 })``; // not a typo!
 
 export const Header = styled.View`
+  padding-left: 20px;
   width: 100%;
   border-bottom-color: lightgray;
   border-bottom-width: 1px;
@@ -57,13 +57,15 @@ export const List = styled.View`
 `;
 
 export const ListItem = styled.View`
+  padding-left: 20px;
   padding-bottom: 5px;
-  border-bottom-color: ${styles.color.lightgray};
+  border-bottom-color: ${s.listItemBorderColor};
   border-bottom-width: 1px;
   background-color: ${s.listItemBgColor};
 `;
 ListItem.defaultProps = {
   listItemBgColor: 'default',
+  listItemBorderColor: 'default',
 };
 
 export const ListItemText = styled.Text`
@@ -75,7 +77,7 @@ ListItemText.defaultProps = {
 };
 
 export const ListItemTitle = styled(ListItemText)`
-  margin-top: 20px;
+  margin: 10px 0 5px;
   font-size: 20px;
   color: ${s.listItemTitleColor};
 `;

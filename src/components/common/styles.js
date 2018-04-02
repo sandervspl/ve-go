@@ -2,11 +2,15 @@ export const color = {
   black: '#191919',
   white: '#FFFFFF',
   lightgray: '#D3D3D3',
-  green: '#47B646',
+  green: '#5bc73f',
 };
 
 export const listItemBgColor = {
   default: color.white,
+  pressed: color.green,
+};
+export const listItemBorderColor = {
+  default: color.lightgray,
   pressed: color.green,
 };
 
