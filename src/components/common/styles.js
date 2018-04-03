@@ -3,6 +3,7 @@ export const color = {
   white: '#FFFFFF',
   lightgray: '#D3D3D3',
   green: '#5bc73f',
+  red: '#c63748',
 };
 
 export const listItemBgColor = {

@@ -53,12 +53,24 @@ class RestaurantDetail extends React.Component {
     }
   }
 
+  getPriceLevelString = (level) => {
+    switch (level) {
+      case 0: return 'Free';
+      case 1: return '$';
+      case 2: return '$$';
+      case 3: return '$$$';
+      case 4: return '$$$$';
+      default: return 'No price level';
+    }
+  };
+
   render() {
     const { loading, photoLoading, data, menu, photoUrl } = this.state;
     const { preFetchData } = this.props.navigation.state.params;
     const photoSrc = photoUrl != null
       ? { uri: photoUrl }
       : DefaultImage;
+    const isOpen = preFetchData.opening_hours && preFetchData.opening_hours.open_now;
 
     return (
       <c.MainView height="100%">
@@ -81,15 +93,19 @@ class RestaurantDetail extends React.Component {
               <mc.CollageContainer>
                 <mc.CollageBlock right bottom>
                   <mc.CollageText>
-                    {data.rating ? data.rating : 'No rating'}
+                    {data.rating ? `${data.rating} / 5` : 'No rating'}
                   </mc.CollageText>
                 </mc.CollageBlock>
                 <mc.CollageBlock bottom>
-                  <mc.CollageText>
-                    {preFetchData.opening_hours && preFetchData.opening_hours.open_now ? 'Open' : 'Closed'}
+                  <mc.CollageText isClosed={!isOpen}>
+                    {isOpen ? 'Open' : 'Closed'}
                   </mc.CollageText>
                 </mc.CollageBlock>
-                <mc.CollageBlock right />
+                <mc.CollageBlock right>
+                  <mc.CollageText>
+                    {data.price_level ? this.getPriceLevelString(data.price_level) : 'No price level'}
+                  </mc.CollageText>
+                </mc.CollageBlock>
                 <mc.CollageBlock />
               </mc.CollageContainer>
             )}
@@ -106,11 +122,10 @@ class RestaurantDetail extends React.Component {
               </c.CenterView>
             ) : (
               <View>
-                <Text>
-                  {data.vicinity}
-                </Text>
+                <Text>{data.vicinity}</Text>
                 {data.formatted_phone_number && <Text>{data.formatted_phone_number}</Text>}
-                {data.url && <Text>{data.url}</Text>}
+                {data.url && <Text>{data.url} {/* REQUIRED */}</Text>}
+                {data.website && <Text>{data.website}</Text>}
                 {data.types && data.types.length > 0 && (
                   <Text>
                     {data.types.reduce((list, type, i) => {
@@ -132,6 +147,12 @@ class RestaurantDetail extends React.Component {
               ) : (
                 <Text>[TODO] Menu available! Show it!</Text>
               )}
+            </View>
+
+            <View>
+              <c.Title>Reviews</c.Title>
+
+              <Text>[TODO]</Text>
             </View>
 
             {data != null && data.code >= 300 && (

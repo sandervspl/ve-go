@@ -3,7 +3,7 @@ import * as s from '../../../common/styles';
 
 export const BigImageHeaderContainer = styled.View`
   width: 100%;
-  height: ${0.47 * 667}px;
+  height: ${0.45 * 667}px;
   overflow: visible;
 `;
 
@@ -16,19 +16,20 @@ export const BigImage = styled.Image`
   height: auto;
 `;
 
-const collageSize = 150;
+const collageWidth = 250;
+const collageHeight = 100;
 export const CollageContainer = styled.View`
   display: flex;
   flex-wrap: wrap;
   flex-direction: row;
   align-items: flex-start;
   position: absolute;
-  top: ${(0.35 * 667) - (collageSize / 2)}px;
-  left: ${(375 / 2) - (collageSize / 2)}px;
+  top: ${(0.35 * 667) - (collageHeight / 2)}px;
+  left: ${(375 / 2) - (collageWidth / 2)}px;
   z-index: 2;
-  width: ${collageSize}px;
-  height: ${collageSize}px;
-  background-color: ${s.color.green};
+  width: ${collageWidth}px;
+  height: ${collageHeight}px;
+  background-color: ${s.color.white};
 `;
 
 export const CollageBlock = styled.View`
@@ -44,7 +45,7 @@ export const CollageBlock = styled.View`
 `;
 
 export const CollageText = styled.Text`
-  color: ${s.color.white};
+  color: ${props => props.isClosed ? s.color.red : s.color.green};
   font-size: 16px;
   font-weight: bold;
   text-align: center;

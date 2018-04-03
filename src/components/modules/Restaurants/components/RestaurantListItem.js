@@ -50,17 +50,6 @@ class RestaurantListItem extends React.Component {
 
             {data.vicinity && <c.ListItemText pressed={pressed}>{data.vicinity}</c.ListItemText>}
 
-            {/*{data.types.length > 0 && (*/}
-              {/*<c.ListItemText pressed={pressed}>*/}
-                {/*{data.types.reduce((list, type, i) => {*/}
-                  {/*const replaceUnderscore = str => str.replace(/_/g, ' ');*/}
-
-                  {/*if (i === 0) return replaceUnderscore(type);*/}
-                  {/*return `${list}, ${replaceUnderscore(type)}`;*/}
-                {/*}, '')}*/}
-              {/*</c.ListItemText>*/}
-            {/*)}*/}
-
             {data.geometry && data.geometry.location && (
               <c.ListItemText pressed={pressed}>
                 {this.getDistanceFromLatLonInM(
