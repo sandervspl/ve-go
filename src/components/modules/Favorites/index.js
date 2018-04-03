@@ -10,7 +10,9 @@ class Favorites extends React.Component {
     return (
       <c.ScrollContainer>
         <c.Header>
-          <c.HugeTitle>Favorites</c.HugeTitle>
+          <c.ContainerWithLine>
+            <c.HugeTitle>Favorites</c.HugeTitle>
+          </c.ContainerWithLine>
         </c.Header>
       </c.ScrollContainer>
     );
