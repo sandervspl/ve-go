@@ -6,8 +6,16 @@ const s = bind(styles);
 
 export { default as PopupTopBar } from './PopupTopBar';
 
-export const Main = styled.View`
+export const MainView = styled.View`
+  background-color: ${styles.color.white};
+  ${props => props.height && `height: ${props.height}`};
+`;
+
+export const FlexView = styled.View`
   flex: 1;
+  ${props => props.padding && `${props.padding}px`};
+  width: 100%;
+  height: 100%;
   background-color: #FFFFFF;
 `;
 
@@ -22,7 +30,7 @@ export const ScrollContainer = styled.ScrollView.attrs({
   }),
 })``; // not a typo!
 
-export const ContainerWithLine = styled.View`
+export const ContainerWithBorder = styled.View`
   margin-left: 20px;
   padding-bottom: ${props => props.paddingBottom ? props.paddingBottom : 0};
   border-bottom-color: lightgray;
@@ -44,6 +52,12 @@ export const CenterView = styled.View`
 export const HugeTitle = styled.Text`
   margin-bottom: 10px;
   font-size: 40px;
+  font-weight: bold;
+`;
+
+export const BigTitle = styled(HugeTitle)`
+  margin-bottom: 10px;
+  font-size: 30px;
   font-weight: bold;
 `;
 

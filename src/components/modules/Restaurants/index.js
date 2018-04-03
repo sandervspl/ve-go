@@ -1,8 +1,10 @@
 // dependencies
 import React from 'react';
+import qs from 'qs';
 import { ActivityIndicator } from 'react-native';
 import * as c from '../../common';
 import * as mc from './components';
+import { apiConfig } from '../../../helpers';
 
 class Restaurants extends React.Component {
   static navigationOptions = ({ navigation }) => {
@@ -36,17 +38,18 @@ class Restaurants extends React.Component {
   toDetailPage = (data) => {
     // this.props.toDetailPage(this.props.navigator, data);
     this.props.navigation.navigate('Details', {
-      data: data,
+      preFetchData: data,
     });
   };
 
   watchPositionSuccess = async ({ coords }) => {
     try {
-      /* eslint-disable */
-      const response = await fetch(
-        `http://192.168.2.7:8080/api/v1/vegan?lat=${coords.latitude}&lon=${coords.longitude}`,
-      );
-      /* eslint-enable */
+      const queries = qs.stringify({
+        lat: coords.latitude,
+        lon: coords.longitude,
+      });
+
+      const response = await fetch(`${apiConfig.url}/vegan?${queries}`);
       const data = await response.json();
 
       if (data.error) {
@@ -96,23 +99,29 @@ class Restaurants extends React.Component {
     const { error, loading, restaurantData } = this.state;
 
     return (
-      <c.ScrollContainer fullHeight={loading} onScroll={(event) => { this.handleScroll(event); }} scrollEventThrottle={16}>
-        <c.Header>
-          <c.ContainerWithLine>
-            <c.HugeTitle>Restaurants</c.HugeTitle>
-          </c.ContainerWithLine>
-        </c.Header>
+      <c.MainView>
+        <c.ScrollContainer
+          fullHeight={loading}
+          onScroll={(event) => { this.handleScroll(event); }}
+          scrollEventThrottle={8}
+        >
+          <c.Header>
+            <c.ContainerWithBorder>
+              <c.HugeTitle>Restaurants</c.HugeTitle>
+            </c.ContainerWithBorder>
+          </c.Header>
 
-        {loading ? (
-          <c.CenterView>
-            <ActivityIndicator />
-          </c.CenterView>
-        ) : (
-          <mc.RestaurantList data={restaurantData} toDetailPage={this.toDetailPage} />
-        )}
+          {loading ? (
+            <c.CenterView>
+              <ActivityIndicator />
+            </c.CenterView>
+          ) : (
+            <mc.RestaurantList data={restaurantData} toDetailPage={this.toDetailPage} />
+          )}
 
-        {error && <c.ErrorText>Error: {error}</c.ErrorText>}
-      </c.ScrollContainer>
+          {error && <c.ErrorText>Error: {error}</c.ErrorText>}
+        </c.ScrollContainer>
+      </c.MainView>
     );
   }
 }

@@ -30,7 +30,7 @@ class RestaurantListItem extends React.Component {
         onPress={this.handlePress}
       >
         <c.ListItem pressed={pressed}>
-          <c.ContainerWithLine paddingBottom={5}>
+          <c.ContainerWithBorder paddingBottom={5}>
             <c.ListItemTitle pressed={pressed}>
               {data.name}
             </c.ListItemTitle>
@@ -59,7 +59,7 @@ class RestaurantListItem extends React.Component {
             <c.ListItemText light={!pressed} pressed={pressed}>
               {data.location.distance} meter away
             </c.ListItemText>
-          </c.ContainerWithLine>
+          </c.ContainerWithBorder>
         </c.ListItem>
       </TouchableWithoutFeedback>
     );
