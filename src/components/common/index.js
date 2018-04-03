@@ -8,7 +8,7 @@ export { default as PopupTopBar } from './PopupTopBar';
 
 export const Main = styled.View`
   flex: 1;
-  background-color: #fff;
+  background-color: #FFFFFF;
 `;
 
 export const ScrollContainer = styled.ScrollView.attrs({
@@ -18,14 +18,19 @@ export const ScrollContainer = styled.ScrollView.attrs({
     position: 'relative',
     paddingBottom: 75,
     height: props.fullHeight ? '100%' : 'auto',
+    backgroundColor: '#FFFFFF',
   }),
 })``; // not a typo!
 
-export const Header = styled.View`
-  padding-left: 20px;
-  width: 100%;
+export const ContainerWithLine = styled.View`
+  margin-left: 20px;
+  padding-bottom: ${props => props.paddingBottom ? props.paddingBottom : 0};
   border-bottom-color: lightgray;
   border-bottom-width: 1px;
+`;
+
+export const Header = styled.View`
+  width: 100%;
 `;
 
 export const CenterView = styled.View`
@@ -57,10 +62,6 @@ export const List = styled.View`
 `;
 
 export const ListItem = styled.View`
-  padding-left: 20px;
-  padding-bottom: 5px;
-  border-bottom-color: ${s.listItemBorderColor};
-  border-bottom-width: 1px;
   background-color: ${s.listItemBgColor};
 `;
 ListItem.defaultProps = {

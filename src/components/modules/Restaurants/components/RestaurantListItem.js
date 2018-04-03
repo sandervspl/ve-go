@@ -30,34 +30,36 @@ class RestaurantListItem extends React.Component {
         onPress={this.handlePress}
       >
         <c.ListItem pressed={pressed}>
-          <c.ListItemTitle pressed={pressed}>
-            {data.name}
-          </c.ListItemTitle>
+          <c.ContainerWithLine paddingBottom={5}>
+            <c.ListItemTitle pressed={pressed}>
+              {data.name}
+            </c.ListItemTitle>
 
-          {data.location.formattedAddress && (
-            <c.ListItemText pressed={pressed}>
-              {data.location.formattedAddress.reduce(
-                (fullAddress, address, i) => {
-                  if (i === 0) return address;
-                  return `${fullAddress}, ${address}`;
-                },
-                '',
-              )}
+            {data.location.formattedAddress && (
+              <c.ListItemText pressed={pressed}>
+                {data.location.formattedAddress.reduce(
+                  (fullAddress, address, i) => {
+                    if (i === 0) return address;
+                    return `${fullAddress}, ${address}`;
+                  },
+                  '',
+                )}
+              </c.ListItemText>
+            )}
+
+            {data.categories.length > 0 && (
+              <c.ListItemText pressed={pressed}>
+                {data.categories.reduce((list, category, i) => {
+                  if (i === 0) return category.shortName;
+                  return `${list}, ${category.shortName}`;
+                }, '')}
+              </c.ListItemText>
+            )}
+
+            <c.ListItemText light={!pressed} pressed={pressed}>
+              {data.location.distance} meter away
             </c.ListItemText>
-          )}
-
-          {data.categories.length > 0 && (
-            <c.ListItemText pressed={pressed}>
-              {data.categories.reduce((list, category, i) => {
-                if (i === 0) return category.shortName;
-                return `${list}, ${category.shortName}`;
-              }, '')}
-            </c.ListItemText>
-          )}
-
-          <c.ListItemText light={!pressed} pressed={pressed}>
-            {data.location.distance} meter away
-          </c.ListItemText>
+          </c.ContainerWithLine>
         </c.ListItem>
       </TouchableWithoutFeedback>
     );
