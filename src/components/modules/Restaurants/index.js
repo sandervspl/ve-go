@@ -22,6 +22,8 @@ class Restaurants extends React.Component {
     error: null,
     loading: true,
     restaurantData: [],
+    lat: null,
+    lon: null,
   };
 
   componentDidMount() {
@@ -44,6 +46,8 @@ class Restaurants extends React.Component {
 
   watchPositionSuccess = async ({ coords }) => {
     try {
+      this.setState({ lat: coords.latitude, lon: coords.longitude });
+
       const queries = qs.stringify({
         lat: coords.latitude,
         lon: coords.longitude,
@@ -59,15 +63,9 @@ class Restaurants extends React.Component {
           loading: false,
           error: data.error,
         });
-      } else if (data.response && data.response.venues) {
-        /* eslint-disable */
-        const sortedByDistance = data.response.venues.sort(
-          (a, b) => a.location.distance > b.location.distance,
-        );
-        /* eslint-enable */
-
+      } else {
         this.setState({
-          restaurantData: sortedByDistance,
+          restaurantData: data,
           loading: false,
         });
       }
@@ -96,7 +94,7 @@ class Restaurants extends React.Component {
   };
 
   render() {
-    const { error, loading, restaurantData } = this.state;
+    const { error, loading, restaurantData, lat, lon } = this.state;
 
     return (
       <c.MainView>
@@ -116,7 +114,11 @@ class Restaurants extends React.Component {
               <ActivityIndicator />
             </c.CenterView>
           ) : (
-            <mc.RestaurantList data={restaurantData} toDetailPage={this.toDetailPage} />
+            <mc.RestaurantList
+              data={restaurantData}
+              toDetailPage={this.toDetailPage}
+              location={{ lat, lon }}
+            />
           )}
 
           {error && <c.ErrorText>Error: {error}</c.ErrorText>}

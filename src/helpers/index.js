@@ -1,2 +1,2 @@
-export { venueProps } from './proptypes';
+export { venuesResultProps } from './proptypes';
 export { apiConfig } from './api';

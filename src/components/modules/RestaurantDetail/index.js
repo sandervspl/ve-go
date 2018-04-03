@@ -18,53 +18,46 @@ class RestaurantDetail extends React.Component {
   state = {
     loading: false,
     data: null,
-    hours: null,
     menu: null,
+    photoUrl: null,
+    photoLoading: false,
   };
 
-  componentDidMount() {
+  async componentDidMount() {
     const { preFetchData } = this.props.navigation.state.params;
 
     this.setState({ loading: true });
 
     // fetch venue information
-    fetch(`${apiConfig.url}/vegan/restaurant/${preFetchData.id}`)
-      .then(response => response.json())
-      .then((data) => {
-        // console.log(data);
-        this.setState({
-          loading: false,
-          data: data.response.venue ? data.response.venue : data.meta,
-        });
-      })
-      .catch(e => console.error(e));
+    const venueResponse = await fetch(`${apiConfig.url}/vegan/restaurant/${preFetchData.place_id}`);
+    const venueData = await venueResponse.json();
 
-    fetch(`${apiConfig.url}/vegan/restaurant/${preFetchData.id}/hours`)
-      .then(response => response.json())
-      .then((data) => {
-        this.setState({ hours: data.response ? data.response : data.meta });
-      })
-      .catch(e => console.error(e));
+    this.setState({
+      loading: false,
+      data: venueData,
+    });
 
-    fetch(`${apiConfig.url}/vegan/restaurant/${preFetchData.id}/menu`)
-      .then(response => response.json())
-      .then((data) => {
-        console.log(data);
-        this.setState({ menu: data.response.menu ? data.response.menu : data.meta });
-      })
-      .catch(e => console.error(e));
+    // fetch venue photos with reference
+    if (venueData.photos && venueData.photos[0]) {
+      this.setState({
+        photoLoading: true,
+      });
+
+      const photosResponse = await fetch(`${apiConfig.url}/vegan/restaurant/photo/${venueData.photos[0].photo_reference}`);
+      const photoData = await photosResponse.json();
+
+      this.setState({
+        photoUrl: photoData.url,
+        photoLoading: false,
+      });
+    }
   }
 
-  formatPhotoURL = item => (
-    `${item.prefix}${item.width}x${item.height}${item.suffix}`
-  );
-
   render() {
-    const { loading, data, menu, hours } = this.state;
+    const { loading, photoLoading, data, menu, photoUrl } = this.state;
     const { preFetchData } = this.props.navigation.state.params;
-    const photos = data != null ? data.photos.groups.find(g => g.type === 'venue') || data.photos.groups[0] : null;
-    const photoSrc = photos != null
-      ? { uri: this.formatPhotoURL(photos.items[0]) }
+    const photoSrc = photoUrl != null
+      ? { uri: photoUrl }
       : DefaultImage;
 
     return (
@@ -72,7 +65,7 @@ class RestaurantDetail extends React.Component {
         <c.ScrollContainer>
           <mc.BigImageHeaderContainer>
             <mc.InnerImageContainer>
-              {!loading ? (
+              {!photoLoading && !loading ? (
                 <mc.BigImage
                   source={photoSrc}
                   style={{ width: '100%', height: '100%' }}
@@ -93,14 +86,10 @@ class RestaurantDetail extends React.Component {
                 </mc.CollageBlock>
                 <mc.CollageBlock bottom>
                   <mc.CollageText>
-                    {hours && hours.hours && hours.hours.timeframes ? 'TODO' : 'No times available'}
+                    {preFetchData.opening_hours && preFetchData.opening_hours.open_now ? 'Open' : 'Closed'}
                   </mc.CollageText>
                 </mc.CollageBlock>
-                <mc.CollageBlock right>
-                  <mc.CollageText>
-                    {data.price && data.price.message ? data.price.message : 'No price info'}
-                  </mc.CollageText>
-                </mc.CollageBlock>
+                <mc.CollageBlock right />
                 <mc.CollageBlock />
               </mc.CollageContainer>
             )}
@@ -115,19 +104,23 @@ class RestaurantDetail extends React.Component {
               <c.CenterView>
                 <ActivityIndicator />
               </c.CenterView>
-            ) : !data.code && (
+            ) : (
               <View>
                 <Text>
-                  {data.location.formattedAddress}
+                  {data.vicinity}
                 </Text>
-                {data.contact.formattedPhone && <Text>{data.contact.formattedPhone}</Text>}
+                {data.formatted_phone_number && <Text>{data.formatted_phone_number}</Text>}
                 {data.url && <Text>{data.url}</Text>}
-                <Text>
-                  {data.categories.reduce((list, category, i) => {
-                    if (i === 0) return category.shortName;
-                    return `${list}, ${category.shortName}`;
-                  }, '')}
-                </Text>
+                {data.types && data.types.length > 0 && (
+                  <Text>
+                    {data.types.reduce((list, type, i) => {
+                      const replaceUnderscore = str => str.replace(/_/g, ' ');
+
+                      if (i === 0) return replaceUnderscore(type);
+                      return `${list}, ${replaceUnderscore(type)}`;
+                    }, '')}
+                  </Text>
+                )}
               </View>
             )}
 
