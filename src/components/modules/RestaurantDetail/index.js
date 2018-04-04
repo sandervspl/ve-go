@@ -75,7 +75,10 @@ class RestaurantDetail extends React.Component {
     return (
       <c.MainView height="100%">
         <c.ScrollContainer>
+          <mc.RatingCircle data={data} loading={loading} preData={preFetchData} />
+
           <mc.BigImageHeaderContainer>
+            <mc.BigImageGradient colors={['rgba(255,255,255,1)', 'rgba(255,255,255,0)']} />
             <mc.InnerImageContainer>
               {!photoLoading && !loading ? (
                 <mc.BigImage
@@ -88,34 +91,9 @@ class RestaurantDetail extends React.Component {
                 </c.CenterView>
               )}
             </mc.InnerImageContainer>
-
-            {data != null && (
-              <mc.CollageContainer>
-                <mc.CollageBlock right bottom>
-                  <mc.CollageText>
-                    {data.rating ? `${data.rating} / 5` : 'No rating'}
-                  </mc.CollageText>
-                </mc.CollageBlock>
-                <mc.CollageBlock bottom>
-                  <mc.CollageText isClosed={!isOpen}>
-                    {isOpen ? 'Open' : 'Closed'}
-                  </mc.CollageText>
-                </mc.CollageBlock>
-                <mc.CollageBlock right>
-                  <mc.CollageText>
-                    {data.price_level ? this.getPriceLevelString(data.price_level) : 'No price level'}
-                  </mc.CollageText>
-                </mc.CollageBlock>
-                <mc.CollageBlock />
-              </mc.CollageContainer>
-            )}
           </mc.BigImageHeaderContainer>
 
           <View style={{ padding: 20, width: '100%' }}>
-            <c.BigTitle>
-              {preFetchData.name}
-            </c.BigTitle>
-
             {data == null ? (
               <c.CenterView>
                 <ActivityIndicator />

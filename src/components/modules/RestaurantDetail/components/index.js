@@ -1,5 +1,8 @@
 import styled from 'styled-components';
+import { LinearGradient } from 'expo';
 import * as s from '../../../common/styles';
+
+export { RatingCircle } from './RatingCircle';
 
 export const BigImageHeaderContainer = styled.View`
   width: 100%;
@@ -16,37 +19,46 @@ export const BigImage = styled.Image`
   height: auto;
 `;
 
-const collageWidth = 250;
-const collageHeight = 100;
-export const CollageContainer = styled.View`
-  display: flex;
-  flex-wrap: wrap;
-  flex-direction: row;
-  align-items: flex-start;
+export const BigImageGradient = styled(LinearGradient)`
+  width: 100%;
+  height: 150px;
   position: absolute;
-  top: ${(0.35 * 667) - (collageHeight / 2)}px;
-  left: ${(375 / 2) - (collageWidth / 2)}px;
   z-index: 2;
-  width: ${collageWidth}px;
-  height: ${collageHeight}px;
-  background-color: ${s.color.white};
+  top: 0;
+  left: 0;
 `;
 
-export const CollageBlock = styled.View`
+export const RatingCircleText = styled.View`
+  display: flex;
   align-items: center;
   justify-content: center;
-  padding: 5px;
-  width: 50%;
-  height: 50%;
-  ${props => props.right && 'border-right-width: 1px'};
-  ${props => props.right && 'border-right-color: rgba(255, 255, 255, .3)'};
-  ${props => props.bottom && 'border-bottom-width: 1px'};
-  ${props => props.bottom && 'border-bottom-color: rgba(255, 255, 255, .3)'};
+  position: absolute;
+  left: 110px;
+  top: ${props => props.circle.y - props.circle.radius + 10};
+  width: ${props => props.circle.radius}px;
+  height: ${props => props.circle.radius}px;
 `;
 
-export const CollageText = styled.Text`
-  color: ${props => props.isClosed ? s.color.red : s.color.green};
-  font-size: 16px;
+export const RatingCircleBottomContainer = styled.View`
+  position: absolute;
+  bottom: 0;
+  padding-left: 20px;
+  width: 100%;
+`;
+
+export const RatingCircleNameContainer = styled.View`
+  bottom: 40px;
+  padding-right: 50px;
+`;
+
+export const RatingCircleName = styled.Text`
+  font-size: 30px;
   font-weight: bold;
-  text-align: center;
+`;
+
+export const ButtonsContainer = styled.View`
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-start;
+  bottom: 20px;
 `;

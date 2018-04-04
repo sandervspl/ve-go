@@ -2,7 +2,6 @@ import React from 'react';
 import { StackNavigator, TabNavigator, TabBarBottom } from 'react-navigation';
 import { Ionicons } from '@expo/vector-icons';
 import * as m from './src/components/modules';
-import * as c from './src/components/common';
 
 const headerStyle = {
   backgroundColor: '#FFFFFF',

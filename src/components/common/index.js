@@ -1,10 +1,11 @@
 import styled from 'styled-components';
-import { default as styledProps, bind } from 'styled-props';
+import { bind } from 'styled-props';
 import * as styles from './styles';
 
 const s = bind(styles);
 
-export { default as PopupTopBar } from './PopupTopBar';
+export { PopupTopBar } from './PopupTopBar';
+export { Button } from './Button';
 
 export const MainView = styled.View`
   background-color: ${styles.color.white};
