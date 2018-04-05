@@ -70,7 +70,6 @@ class RestaurantDetail extends React.Component {
     const photoSrc = photoUrl != null
       ? { uri: photoUrl }
       : DefaultImage;
-    const isOpen = preFetchData.opening_hours && preFetchData.opening_hours.open_now;
 
     return (
       <c.MainView height="100%">

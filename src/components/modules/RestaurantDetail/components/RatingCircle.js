@@ -1,6 +1,7 @@
 import React from 'react';
 import { ActivityIndicator, View, Text } from 'react-native';
 import { Svg } from 'expo';
+import { Ionicons } from '@expo/vector-icons';
 import * as styles from '../../../common/styles';
 import * as c from '../../../common';
 import * as mc from './index';
@@ -10,13 +11,13 @@ export class RatingCircle extends React.Component {
   circle = new function() {
     this.container = {
       width: 375,
-      height: 0.55 * 667,
+      height: 0.6 * 667,
     };
-    this.radius = (this.container.height * .8) / 2;
+    this.radius = (this.container.width * .8) / 2;
     this.strokeWidth = 2;
     this.circumference = 2 * Math.PI * this.radius;
     this.x = this.container.height / 2 - this.strokeWidth / 2;
-    this.y = this.container.height - this.radius;
+    this.y = this.container.height - this.radius - 20;
   };
 
   getRatingCircumference = () => {
@@ -34,6 +35,7 @@ export class RatingCircle extends React.Component {
   render() {
     const { circle } = this;
     const { preData, data, loading } = this.props;
+    const isOpen = preData.opening_hours && preData.opening_hours.open_now;
 
     return (
       <Svg
@@ -91,17 +93,27 @@ export class RatingCircle extends React.Component {
         </mc.RatingCircleText>
 
         <mc.RatingCircleBottomContainer>
-          <mc.RatingCircleNameContainer>
-            <mc.RatingCircleName>
+          <mc.CircleTextContainer>
+            <mc.CircleText>
               {preData.name}
-            </mc.RatingCircleName>
-          </mc.RatingCircleNameContainer>
+            </mc.CircleText>
+            <mc.CircleText small>
+              {isOpen ? 'Now open' : isOpen == null ? 'Opening times unavailable' : 'Closed'}
+            </mc.CircleText>
+          </mc.CircleTextContainer>
 
-          <mc.ButtonsContainer>
-            <c.Button onPress={() => console.log('hello world')}>
-              Show in Maps
-            </c.Button>
-          </mc.ButtonsContainer>
+          {data != null && (
+            <mc.ButtonsContainer>
+              {data.formatted_phone_number && (
+                <mc.DetailButton onPress={() => console.log('hello world')}>
+                  <Text>{data.formatted_phone_number}</Text>
+                </mc.DetailButton>
+              )}
+              <mc.DetailButton last onPress={() => console.log('hello world')}>
+                Show in Maps
+              </mc.DetailButton>
+            </mc.ButtonsContainer>
+          )}
         </mc.RatingCircleBottomContainer>
       </Svg>
     );
