@@ -1,5 +1,15 @@
 {
   "expo": {
-    "sdkVersion": "25.0.0"
+    "name": "Vegan Go",
+    "icon": "./icon.png",
+    "version": "0.1.0",
+    "slug": "vegan-go",
+    "sdkVersion": "25.0.0",
+    "ios": {
+      "bundleIdentifier": "com.sandervispoel.vegango"
+    },
+    "android": {
+      "package": "com.sandervispoel.vegango"
+    }
   }
 }
