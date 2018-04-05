@@ -3,7 +3,7 @@ import { ActivityIndicator, View, Text } from 'react-native';
 import { Svg } from 'expo';
 import { Ionicons } from '@expo/vector-icons';
 import * as styles from '../../../common/styles';
-import * as c from '../../../common';
+import { ratingColor } from '../../../../helpers';
 import * as mc from './index';
 
 export class RatingCircle extends React.Component {
@@ -77,6 +77,17 @@ export class RatingCircle extends React.Component {
     return `Opens at ${openTime.substr(0, 2)}:${openTime.substr(2, openTime.length)}`;
   };
 
+  // color the circle stroke according to the venue rating
+  getRatingColor = () => {
+    const { data } = this.props;
+
+    if (data == null) {
+      return styles.color.lightgray;
+    }
+
+    return ratingColor(data.rating);
+  };
+
   render() {
     const { circle } = this;
     const { preData, data, loading, onWebsiteClick, onPhoneClick } = this.props;
@@ -107,7 +118,7 @@ export class RatingCircle extends React.Component {
             cy={circle.x}
             r={circle.radius}
             fill="none"
-            stroke={styles.color.green}
+            stroke={this.getRatingColor()}
             strokeWidth={circle.strokeWidth}
             strokeDasharray={[circle.circumference]}
             strokeDashoffset={this.getRatingCircumference()}
@@ -145,7 +156,9 @@ export class RatingCircle extends React.Component {
               {preData.name}
             </mc.CircleText>
             <mc.CircleText small>
-              <Text style={{ fontWeight: 'bold' }}>{isOpen ? 'Now open' : isOpen == null ? 'Opening times unavailable' : 'Closed'}</Text>
+              <Text style={{ fontWeight: 'bold' }}>
+                {isOpen ? 'Now open' : isOpen != null ? 'Closed' : 'Opening times unavailable'}
+              </Text>
               {this.getOpenStateString() && ` · ${this.getOpenStateString()}`}
             </mc.CircleText>
           </mc.CircleTextContainer>

@@ -7,6 +7,7 @@ export const color = {
   green: '#5BC73F',
   darkGreen: '#4A9435',
   red: '#C63748',
+  orange: 'rgba(255, 139, 52, 1)',
 };
 
 export const listItemBgColor = {
