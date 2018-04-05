@@ -126,11 +126,10 @@ export const ReviewRatingContainer = styled.View`
   width: 30px;
   height: 30px;
   border-radius: 20px;
-  border: 1px solid ${s.color.green};
+  border-width: 1px;
 `;
 
 export const ReviewRatingText = styled.Text`
-  color: ${s.color.green};
   font-size: 20px;
 `;
 
