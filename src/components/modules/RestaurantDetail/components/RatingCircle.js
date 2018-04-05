@@ -33,7 +33,7 @@ export class RatingCircle extends React.Component {
 
   render() {
     const { circle } = this;
-    const { preData, data, loading, onMapsClick } = this.props;
+    const { preData, data, loading, onMapsClick, onPhoneClick } = this.props;
     const isOpen = preData.opening_hours && preData.opening_hours.open_now;
 
     return (
@@ -104,7 +104,7 @@ export class RatingCircle extends React.Component {
           {data != null && (
             <mc.ButtonsContainer>
               {data.formatted_phone_number && (
-                <mc.DetailButton onPress={() => console.log('hello world')}>
+                <mc.DetailButton onPress={onPhoneClick}>
                   <Text>{data.formatted_phone_number}</Text>
                 </mc.DetailButton>
               )}

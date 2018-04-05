@@ -1,6 +1,7 @@
 import React from 'react';
-import { ActivityIndicator, Linking } from 'react-native';
 import PT from 'prop-types';
+import { ActivityIndicator, Linking } from 'react-native';
+import call from 'react-native-phone-call';
 import * as c from '../../common';
 import * as mc from './components';
 import { apiConfig } from '../../../helpers';
@@ -64,11 +65,18 @@ class RestaurantDetail extends React.Component {
   };
 
   onMapsClick = () => {
-    Linking.openURL(this.state.data.url);
+    Linking.openURL(this.state.data.url)
+      .catch(e => console.error(e));
   };
 
   onWebsiteClick = () => {
-    Linking.openURL(this.state.data.website);
+    Linking.openURL(this.state.data.website)
+      .catch(e => console.error(e));
+  };
+
+  onPhoneClick = () => {
+    call({ number: this.state.data.formatted_phone_number, prompt: true })
+      .catch(e => console.error(e));
   };
 
   render() {
@@ -86,6 +94,7 @@ class RestaurantDetail extends React.Component {
             loading={loading}
             preData={preFetchData}
             onMapsClick={this.onMapsClick}
+            onPhoneClick={this.onPhoneClick}
           />
 
           <mc.BigImageHeaderContainer>
