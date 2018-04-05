@@ -1,6 +1,7 @@
 import React from 'react';
 import { ActivityIndicator, View, Text } from 'react-native';
 import { Svg } from 'expo';
+import { Ionicons } from '@expo/vector-icons';
 import * as styles from '../../../common/styles';
 import * as c from '../../../common';
 import * as mc from './index';
@@ -78,15 +79,20 @@ export class RatingCircle extends React.Component {
 
         <mc.RatingCircleText circle={circle}>
           <View>
-            <Text style={{ textAlign: 'center', fontSize: 20 }}>
-              RATING
-            </Text>
+            {/*<Text style={{ textAlign: 'center', fontSize: 20 }}>*/}
+              {/*RATING*/}
+            {/*</Text>*/}
             {loading
               ? <ActivityIndicator />
               : (
-                <c.HugeTitle style={{ textAlign: 'center', width: circle.radius * 2 }}>
-                  {data && data.rating ? `${data.rating} / 5` : 'No rating'}
-                </c.HugeTitle>
+                <React.Fragment>
+                  <mc.RatingCircleRatingText circle={circle}>
+                    {data && data.rating ? `${data.rating}` : 'No rating'}
+                  </mc.RatingCircleRatingText>
+                  <mc.RatingIconContainer circle={circle}>
+                    {data && data.rating && <Ionicons name="ios-star" size={150} color="rgba(255,139,52,0.1)" />}
+                  </mc.RatingIconContainer>
+                </React.Fragment>
               )}
           </View>
         </mc.RatingCircleText>

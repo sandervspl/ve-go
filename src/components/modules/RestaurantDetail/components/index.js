@@ -37,9 +37,26 @@ export const RatingCircleText = styled.View`
   justify-content: center;
   position: absolute;
   left: 110px;
-  top: ${props => props.circle.y - props.circle.radius + 10};
+  top: ${props => props.circle.y - props.circle.radius};
   width: ${props => props.circle.radius}px;
   height: ${props => props.circle.radius}px;
+`;
+
+export const RatingCircleRatingText = styled.Text`
+  width: ${props => props.circle.radius * 2}px;
+  text-align: center;
+  font-size: 55px;
+`;
+
+export const RatingIconContainer = styled.View`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  left: 0;
+  top: -${props => props.circle.radius - 35}px;
+  width: ${props => props.circle.radius * 2}px;
+  height: ${props => props.circle.radius * 2}px;
 `;
 
 export const RatingCircleBottomContainer = styled.View`
