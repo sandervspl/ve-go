@@ -4,10 +4,12 @@ import * as c from '../../../common';
 import * as s from '../../../common/styles';
 
 export { RatingCircle } from './RatingCircle';
+export { Reviews } from './Reviews';
+export { Review } from './Review';
+export { VenueDetails } from './VenueDetails';
 
 export const BigImageHeaderContainer = styled.View`
   width: 100%;
-  height: ${0.45 * 667}px;
   overflow: visible;
 `;
 
@@ -35,7 +37,7 @@ export const RatingCircleText = styled.View`
   justify-content: center;
   position: absolute;
   left: 110px;
-  top: ${props => props.circle.y - props.circle.radius + 20};
+  top: ${props => props.circle.y - props.circle.radius + 10};
   width: ${props => props.circle.radius}px;
   height: ${props => props.circle.radius}px;
 `;
@@ -72,4 +74,67 @@ export const DetailButton = styled(c.Button)`
 
 export const IconText = styled.Text`
   margin-left: 5px;
+`;
+
+export const ContentContainer = styled.View`
+  display: flex;
+  align-items: flex-start;
+  padding: 20px;
+  width: 100%;
+`;
+
+export const VenueInfoContainer = styled.View`
+  width: 100%;
+  background-color: ${s.color.darkGreen};
+`;
+
+export const InfoText = styled.Text`
+  color: ${s.color.white};
+  font-size: 16px;
+`;
+
+export const ReviewContainer = styled.View`
+  align-items: flex-start;
+  justify-content: flex-start;
+  flex-direction: row;
+  padding: 10px;
+  margin-bottom: 20px;
+  width: 100%;
+  background-color: ${s.color.lightestGray};
+`;
+
+export const ReviewRatingContainer = styled.View`
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 20px;
+  border: 1px solid ${s.color.green};
+`;
+
+export const ReviewRatingText = styled.Text`
+  color: ${s.color.green};
+  font-size: 20px;
+`;
+
+export const ReviewTextContainer = styled.View`
+  align-items: flex-start;
+  justify-content: flex-start;
+  padding: 0 10px;
+  width: 90%;
+`;
+
+export const ReviewDate = styled.Text`
+  margin-bottom: 5px;
+  color: ${s.color.gray};
+`;
+
+export const ReviewTextInner = styled.View`
+  flex-direction: row;
+  width: 100%;
+`;
+
+export const ReviewText = styled.Text`
+  flex: 1;
+  flex-wrap: wrap;
 `;

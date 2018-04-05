@@ -63,7 +63,7 @@ export const BigTitle = styled(HugeTitle)`
 `;
 
 export const Title = styled.Text`
-  margin-top: 20px;
+  ${props => !props.noMargin && 'margin-top: 20px'};
   font-size: 20px;
 `;
 

@@ -1,9 +1,12 @@
 export const color = {
   black: '#191919',
   white: '#FFFFFF',
+  gray: '#b9b9b9',
   lightgray: '#D3D3D3',
-  green: '#5bc73f',
-  red: '#c63748',
+  lightestGray: '#FAFAFA',
+  green: '#5BC73F',
+  darkGreen: '#4A9435',
+  red: '#C63748',
 };
 
 export const listItemBgColor = {

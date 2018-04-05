@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, ActivityIndicator, Text } from 'react-native';
+import { ActivityIndicator, Linking } from 'react-native';
 import PT from 'prop-types';
 import * as c from '../../common';
 import * as mc from './components';
@@ -18,7 +18,6 @@ class RestaurantDetail extends React.Component {
   state = {
     loading: false,
     data: null,
-    menu: null,
     photoUrl: null,
     photoLoading: false,
   };
@@ -64,8 +63,16 @@ class RestaurantDetail extends React.Component {
     }
   };
 
+  onMapsClick = () => {
+    Linking.openURL(this.state.data.url);
+  };
+
+  onWebsiteClick = () => {
+    Linking.openURL(this.state.data.website);
+  };
+
   render() {
-    const { loading, photoLoading, data, menu, photoUrl } = this.state;
+    const { loading, photoLoading, data, photoUrl } = this.state;
     const { preFetchData } = this.props.navigation.state.params;
     const photoSrc = photoUrl != null
       ? { uri: photoUrl }
@@ -74,7 +81,12 @@ class RestaurantDetail extends React.Component {
     return (
       <c.MainView height="100%">
         <c.ScrollContainer>
-          <mc.RatingCircle data={data} loading={loading} preData={preFetchData} />
+          <mc.RatingCircle
+            data={data}
+            loading={loading}
+            preData={preFetchData}
+            onMapsClick={this.onMapsClick}
+          />
 
           <mc.BigImageHeaderContainer>
             <mc.BigImageGradient colors={['rgba(255,255,255,1)', 'rgba(255,255,255,0)']} />
@@ -92,52 +104,10 @@ class RestaurantDetail extends React.Component {
             </mc.InnerImageContainer>
           </mc.BigImageHeaderContainer>
 
-          <View style={{ padding: 20, width: '100%' }}>
-            {data == null ? (
-              <c.CenterView>
-                <ActivityIndicator />
-              </c.CenterView>
-            ) : (
-              <View>
-                <Text>{data.vicinity}</Text>
-                {data.formatted_phone_number && <Text>{data.formatted_phone_number}</Text>}
-                {data.url && <Text>{data.url} {/* REQUIRED */}</Text>}
-                {data.website && <Text>{data.website}</Text>}
-                {data.types && data.types.length > 0 && (
-                  <Text>
-                    {data.types.reduce((list, type, i) => {
-                      const replaceUnderscore = str => str.replace(/_/g, ' ');
-
-                      if (i === 0) return replaceUnderscore(type);
-                      return `${list}, ${replaceUnderscore(type)}`;
-                    }, '')}
-                  </Text>
-                )}
-              </View>
-            )}
-
-            <View>
-              <c.Title>Menu</c.Title>
-
-              {menu == null || !menu.menus || menu.menus.count === 0 ? (
-                <Text>No menu information available.</Text>
-              ) : (
-                <Text>[TODO] Menu available! Show it!</Text>
-              )}
-            </View>
-
-            <View>
-              <c.Title>Reviews</c.Title>
-
-              <Text>[TODO]</Text>
-            </View>
-
-            {data != null && data.code >= 300 && (
-              <c.ErrorText>
-                {data.errorDetail}
-              </c.ErrorText>
-            )}
-          </View>
+          <mc.VenueDetails data={data} onWebsiteClick={this.onWebsiteClick} />
+          {data != null && (
+            <mc.Reviews data={data.reviews} />
+          )}
         </c.ScrollContainer>
       </c.MainView>
     );

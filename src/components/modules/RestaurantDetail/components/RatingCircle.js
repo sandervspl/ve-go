@@ -1,7 +1,6 @@
 import React from 'react';
 import { ActivityIndicator, View, Text } from 'react-native';
 import { Svg } from 'expo';
-import { Ionicons } from '@expo/vector-icons';
 import * as styles from '../../../common/styles';
 import * as c from '../../../common';
 import * as mc from './index';
@@ -34,7 +33,7 @@ export class RatingCircle extends React.Component {
 
   render() {
     const { circle } = this;
-    const { preData, data, loading } = this.props;
+    const { preData, data, loading, onMapsClick } = this.props;
     const isOpen = preData.opening_hours && preData.opening_hours.open_now;
 
     return (
@@ -52,7 +51,7 @@ export class RatingCircle extends React.Component {
             cy={circle.x}
             r={circle.radius}
             fill="none"
-            stroke="#fafafa"
+            stroke={styles.color.lightestGray}
             strokeWidth={circle.strokeWidth}
           />
 
@@ -73,7 +72,7 @@ export class RatingCircle extends React.Component {
             cx={circle.y}
             cy={circle.x}
             r={circle.radius * .9}
-            fill="#fafafa"
+            fill={styles.color.lightestGray}
           />
         </Svg.G>
 
@@ -109,7 +108,7 @@ export class RatingCircle extends React.Component {
                   <Text>{data.formatted_phone_number}</Text>
                 </mc.DetailButton>
               )}
-              <mc.DetailButton last onPress={() => console.log('hello world')}>
+              <mc.DetailButton last onPress={onMapsClick}>
                 Show in Maps
               </mc.DetailButton>
             </mc.ButtonsContainer>

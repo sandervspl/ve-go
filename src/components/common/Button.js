@@ -1,20 +1,22 @@
 import React from 'react';
 import styled from 'styled-components';
-import * as styles from './styles';
+import _ from 'lodash';
+import * as s from './styles';
 
 export const ButtonContainer = styled.TouchableHighlight`
   padding: 10px 15px;
-  border: 1px solid ${styles.color.green};
+  border-width: 1px;
+  border-color: ${props => props.white ? s.color.white : s.color.green};
   border-radius: 20px;
 `;
 
 export const ButtonText = styled.Text`
-  color: ${styles.color.green};
+  color: ${props => props.white ? s.color.white : s.color.green};
 `;
 
 export const Button = props => (
   <ButtonContainer {...props}>
-    <ButtonText>
+    <ButtonText {..._.omit(props, 'style')}>
       {props.children}
     </ButtonText>
   </ButtonContainer>
