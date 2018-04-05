@@ -105,7 +105,7 @@ export class RatingCircle extends React.Component {
             <mc.ButtonsContainer>
               {data.formatted_phone_number && (
                 <mc.DetailButton onPress={onPhoneClick}>
-                  <Text>{data.formatted_phone_number}</Text>
+                  Call
                 </mc.DetailButton>
               )}
               <mc.DetailButton last onPress={onMapsClick}>
