@@ -67,14 +67,14 @@ export const RatingCircleBottomContainer = styled.View`
 `;
 
 export const CircleTextContainer = styled.View`
-  bottom: 40px;
+  bottom: 35px;
   padding-right: 50px;
 `;
 
 export const CircleText = styled.Text`
   color: ${props => props.small ? s.color.lightgray : s.color.black};
-  font-size: ${props => props.small ? 20 : 30}px;
-  font-weight: bold;
+  font-size: ${props => props.small ? 17 : 30}px;
+  ${props => props.bold && 'font-weight: bold'};
 `;
 
 export const ButtonsContainer = styled.View`
@@ -142,7 +142,7 @@ export const ReviewTextContainer = styled.View`
 `;
 
 export const ReviewDate = styled.Text`
-  margin-bottom: 5px;
+  margin: 2px 0 5px;
   color: ${s.color.gray};
 `;
 

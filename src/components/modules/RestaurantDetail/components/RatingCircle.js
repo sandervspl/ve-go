@@ -32,6 +32,51 @@ export class RatingCircle extends React.Component {
     return this.circle.circumference * (1 - prct);
   };
 
+  getOpenStateString = () => {
+    const { data } = this.props;
+
+    // return nothing if there is no opening_hours available
+    if (data == null || data.opening_hours == null) {
+      return null;
+    }
+
+    const d = new Date();
+    const curHours = d.getHours();
+    let curDay = d.getDay();
+    let period = data.opening_hours.periods.find(p => p.open.day === curDay);
+    let openTime;
+    let closeTime;
+
+    // if current day has no information, get first opening time
+    if (period == null) {
+      [period] = data.opening_hours.periods;
+
+      // get weekday name from weekday_text array string
+      const weekday = data.weekday_text[period.open.day].split(':')[0];
+      openTime = period.open.time;
+
+      return `Opens on ${weekday} at ${openTime.substr(0, 2)}:${openTime.substr(2, openTime.length)}`;
+    }
+
+    openTime = period.open.time;
+    closeTime = period.close.time;
+
+    // get first two numbers of time (i.e. "09" from "0900") and make it a number
+    const openingTimeNum = Number(openTime.substr(0, 2));
+    const closeTimeNum = Number(closeTime.substr(0, 2));
+
+    if (curHours >= openingTimeNum && curHours < closeTimeNum) {
+      return `Open until ${closeTime.substr(0, 2)}:${closeTime.substr(2, closeTime.length)}`;
+    }
+
+    // venue is closed. Get times for next day
+    curDay = curDay < 6 ? curDay + 1 : 0;
+    openTime = data.opening_hours.periods[curDay].open.time;
+    closeTime = data.opening_hours.periods[curDay].close.time;
+
+    return `Opens at ${openTime.substr(0, 2)}:${openTime.substr(2, openTime.length)}`;
+  };
+
   render() {
     const { circle } = this;
     const { preData, data, loading, onWebsiteClick, onPhoneClick } = this.props;
@@ -79,9 +124,6 @@ export class RatingCircle extends React.Component {
 
         <mc.RatingCircleText circle={circle}>
           <View>
-            {/*<Text style={{ textAlign: 'center', fontSize: 20 }}>*/}
-              {/*RATING*/}
-            {/*</Text>*/}
             {loading
               ? <ActivityIndicator />
               : (
@@ -99,11 +141,12 @@ export class RatingCircle extends React.Component {
 
         <mc.RatingCircleBottomContainer>
           <mc.CircleTextContainer>
-            <mc.CircleText>
+            <mc.CircleText bold>
               {preData.name}
             </mc.CircleText>
             <mc.CircleText small>
-              {isOpen ? 'Now open' : isOpen == null ? 'Opening times unavailable' : 'Closed'}
+              <Text style={{ fontWeight: 'bold' }}>{isOpen ? 'Now open' : isOpen == null ? 'Opening times unavailable' : 'Closed'}</Text>
+              {this.getOpenStateString() && ` · ${this.getOpenStateString()}`}
             </mc.CircleText>
           </mc.CircleTextContainer>
 
