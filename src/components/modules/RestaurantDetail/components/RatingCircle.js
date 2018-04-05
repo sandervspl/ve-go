@@ -33,7 +33,7 @@ export class RatingCircle extends React.Component {
 
   render() {
     const { circle } = this;
-    const { preData, data, loading, onMapsClick, onPhoneClick } = this.props;
+    const { preData, data, loading, onWebsiteClick, onPhoneClick } = this.props;
     const isOpen = preData.opening_hours && preData.opening_hours.open_now;
 
     return (
@@ -108,8 +108,8 @@ export class RatingCircle extends React.Component {
                   Call
                 </mc.DetailButton>
               )}
-              <mc.DetailButton last onPress={onMapsClick}>
-                Show in Maps
+              <mc.DetailButton last onPress={onWebsiteClick}>
+                Website
               </mc.DetailButton>
             </mc.ButtonsContainer>
           )}

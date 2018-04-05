@@ -3,7 +3,7 @@ import { ActivityIndicator } from 'react-native';
 import * as mc from './index';
 import * as c from '../../../common';
 
-export const VenueDetails = (props) => (
+export const VenueDetails = props => (
   <mc.VenueInfoContainer>
     <mc.ContentContainer>
       {props.data == null ? (
@@ -16,10 +16,10 @@ export const VenueDetails = (props) => (
           {props.data.website && (
             <c.Button
               white
-              onPress={props.onWebsiteClick}
+              onPress={props.onMapsClick}
               style={{ marginTop: 10 }}
             >
-              Website
+              Show in Maps
             </c.Button>
           )}
         </React.Fragment>

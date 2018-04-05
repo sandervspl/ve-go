@@ -93,7 +93,7 @@ class RestaurantDetail extends React.Component {
             data={data}
             loading={loading}
             preData={preFetchData}
-            onMapsClick={this.onMapsClick}
+            onWebsiteClick={this.onWebsiteClick}
             onPhoneClick={this.onPhoneClick}
           />
 
@@ -113,7 +113,7 @@ class RestaurantDetail extends React.Component {
             </mc.InnerImageContainer>
           </mc.BigImageHeaderContainer>
 
-          <mc.VenueDetails data={data} onWebsiteClick={this.onWebsiteClick} />
+          <mc.VenueDetails data={data} onMapsClick={this.onMapsClick} />
           {data != null && (
             <mc.Reviews data={data.reviews} />
           )}
