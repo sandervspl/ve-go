@@ -8,6 +8,7 @@
     "browser": true
   },
   "rules": {
+    "max-len": [1, 120],
     "react/jsx-filename-extension": [0],
     "react/require-default-props": [0],
     "react/no-did-mount-set-state": [0],

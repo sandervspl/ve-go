@@ -37,10 +37,16 @@ class Restaurants extends React.Component {
     );
   }
 
+  componentWillUnmount() {
+    navigator.geolocation.clearWatch(this.watchId);
+  }
+
   toDetailPage = (data) => {
-    // this.props.toDetailPage(this.props.navigator, data);
+    const { lat, lon } = this.state;
+
     this.props.navigation.navigate('Details', {
       preFetchData: data,
+      location: { lat, lon },
     });
   };
 
