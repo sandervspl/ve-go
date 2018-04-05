@@ -2,6 +2,7 @@ import React from 'react';
 import PT from 'prop-types';
 import { TouchableWithoutFeedback } from 'react-native';
 import * as c from '../../../common';
+import * as s from '../../../common/styles';
 import { getDistanceFromLatLonInM } from '../../../../helpers';
 
 class RestaurantListItem extends React.Component {
@@ -23,6 +24,7 @@ class RestaurantListItem extends React.Component {
   render() {
     const { data, location } = this.props;
     const { pressed } = this.state;
+    const isOpen = data.opening_hours && data.opening_hours.open_now;
 
     return (
       <TouchableWithoutFeedback
@@ -48,8 +50,12 @@ class RestaurantListItem extends React.Component {
             )}
 
             {data.opening_hours && data.opening_hours.open_now != null && (
-              <c.ListItemText light={!pressed} pressed={pressed}>
-                {data.opening_hours.open_now ? 'Open' : 'Closed'}
+              <c.ListItemText
+                light={!pressed}
+                pressed={pressed}
+                style={{ color: isOpen ? s.color.green : s.color.red }}
+              >
+                {isOpen ? 'Open' : 'Closed'}
               </c.ListItemText>
             )}
           </c.ContainerWithBorder>
