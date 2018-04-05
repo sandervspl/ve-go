@@ -45,34 +45,44 @@ export class RatingCircle extends React.Component {
     let curDay = d.getDay();
     let period = data.opening_hours.periods.find(p => p.open.day === curDay);
     let openTime;
-    let closeTime;
 
     // if current day has no information, get first opening time
     if (period == null) {
       [period] = data.opening_hours.periods;
 
       // get weekday name from weekday_text array string
-      const weekday = data.weekday_text[period.open.day].split(':')[0];
+      const weekday = data.opening_hours.weekday_text[period.open.day - 1].split(':')[0];
       openTime = period.open.time;
 
       return `Opens on ${weekday} at ${openTime.substr(0, 2)}:${openTime.substr(2, openTime.length)}`;
     }
 
+    const closeTime = period.close.time;
     openTime = period.open.time;
-    closeTime = period.close.time;
 
     // get first two numbers of time (i.e. "09" from "0900") and make it a number
     const openingTimeNum = Number(openTime.substr(0, 2));
     const closeTimeNum = Number(closeTime.substr(0, 2));
 
+    // venue is open.
     if (curHours >= openingTimeNum && curHours < closeTimeNum) {
       return `Open until ${closeTime.substr(0, 2)}:${closeTime.substr(2, closeTime.length)}`;
     }
 
-    // venue is closed. Get times for next day
-    curDay = curDay < 6 ? curDay + 1 : 0;
-    openTime = data.opening_hours.periods[curDay].open.time;
-    closeTime = data.opening_hours.periods[curDay].close.time;
+    // venue is closed. Get times for next day (or wrap around to first index)
+    curDay += 1;
+    period = data.opening_hours.periods.find(p => p.open.day === curDay);
+
+    // get first available period if a next day period is not available
+    if (period == null) {
+      const { day, time } = data.opening_hours.periods[0].open;
+      const weekday = data.opening_hours.weekday_text[day - 1].split(':')[0];
+
+      return `Opens on ${weekday} at ${time.substr(0, 2)}:${time.substr(2, time.length)}`;
+    }
+
+    // return next day opening time
+    openTime = period.open.time;
 
     return `Opens at ${openTime.substr(0, 2)}:${openTime.substr(2, openTime.length)}`;
   };
@@ -143,7 +153,7 @@ export class RatingCircle extends React.Component {
                     {data && data.rating ? `${data.rating}` : 'No rating'}
                   </mc.RatingCircleRatingText>
                   <mc.RatingIconContainer circle={circle}>
-                    {data && data.rating && <Ionicons name="ios-star" size={150} color="rgba(255,139,52,0.1)" />}
+                    <Ionicons name="ios-star" size={150} color="rgba(255,139,52,0.1)" />
                   </mc.RatingIconContainer>
                 </React.Fragment>
               )}

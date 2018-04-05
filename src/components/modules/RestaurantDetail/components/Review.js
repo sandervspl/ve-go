@@ -6,6 +6,8 @@ import * as mc from './index';
 export const Review = ({ data }) => {
   const d = new Date(0);
   d.setUTCSeconds(data.time);
+
+  // create date string with English syntax
   const date = d.toLocaleDateString('en-EN', {
     year: 'numeric',
     month: 'long',
