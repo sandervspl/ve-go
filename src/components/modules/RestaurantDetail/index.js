@@ -4,7 +4,7 @@ import { ActivityIndicator, Linking } from 'react-native';
 import call from 'react-native-phone-call';
 import * as c from '../../common';
 import * as mc from './components';
-import { apiConfig } from '../../../helpers';
+import { apiConfig, getDistanceFromLatLonInM } from '../../../helpers';
 import DefaultImage from '../../../static/images/default-header-image.jpg';
 
 class RestaurantDetail extends React.Component {
@@ -81,7 +81,7 @@ class RestaurantDetail extends React.Component {
 
   render() {
     const { loading, photoLoading, data, photoUrl } = this.state;
-    const { preFetchData } = this.props.navigation.state.params;
+    const { preFetchData, location } = this.props.navigation.state.params;
     const photoSrc = photoUrl != null
       ? { uri: photoUrl }
       : DefaultImage;
@@ -113,7 +113,12 @@ class RestaurantDetail extends React.Component {
             </mc.InnerImageContainer>
           </mc.BigImageHeaderContainer>
 
-          <mc.VenueDetails data={data} onMapsClick={this.onMapsClick} />
+          <mc.VenueDetails
+            data={data}
+            location={location}
+            onMapsClick={this.onMapsClick}
+          />
+
           {data != null && (
             <mc.Reviews data={data.reviews} />
           )}

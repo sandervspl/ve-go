@@ -89,7 +89,7 @@ export const VenueInfoContainer = styled.View`
 `;
 
 export const InfoText = styled.Text`
-  color: ${s.color.white};
+  color: ${props => props.light ? s.color.lightgray : s.color.white};
   font-size: 16px;
 `;
 
