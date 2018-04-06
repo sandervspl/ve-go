@@ -3,10 +3,14 @@ import { ActivityIndicator, View, Text } from 'react-native';
 import { Svg } from 'expo';
 import { Ionicons } from '@expo/vector-icons';
 import * as s from '../../../common/styles';
-import { ratingColor } from '../../../../helpers';
+import { ratingColor, CountUp } from '../../../../helpers';
 import * as mc from './index';
 
 export class RatingCircle extends React.Component {
+  state = {
+    rating: null,
+  };
+
   // eslint-disable-next-line
   circle = new function() {
     this.container = {
@@ -20,14 +24,35 @@ export class RatingCircle extends React.Component {
     this.y = this.container.height - this.radius - 20;
   };
 
-  getRatingCircumference = () => {
-    const { data } = this.props;
+  componentWillReceiveProps(nextProps) {
+    if (this.props.data == null && nextProps.data != null) {
+      if (nextProps.data.rating) {
+        this.countUp = new CountUp({
+          startVal: 0.0,
+          endVal: nextProps.data.rating,
+          decimals: 2,
+          duration: 1.5,
+          options: {},
+          onCount: num => this.setState({ rating: num }),
+        }).start();
+      }
+    }
+  }
 
-    if (!data || !data.rating) {
+  componentWillUnmount() {
+    if (this.countUp) {
+      this.countUp.pauseResume();
+    }
+  }
+
+  getRatingCircumference = () => {
+    const { rating } = this.state;
+
+    if (rating == null) {
       return this.circle.circumference;
     }
 
-    const prct = data.rating / 5;
+    const prct = rating / 5;
 
     return this.circle.circumference * (1 - prct);
   };
@@ -89,17 +114,18 @@ export class RatingCircle extends React.Component {
 
   // color the circle stroke according to the venue rating
   getRatingColor = () => {
-    const { data } = this.props;
+    const { rating } = this.state;
 
-    if (data == null) {
+    if (rating == null) {
       return s.color.lightgray;
     }
 
-    return ratingColor(data.rating);
+    return ratingColor(rating);
   };
 
   render() {
     const { circle } = this;
+    const { rating } = this.state;
     const { preData, data, loading, onWebsiteClick, onPhoneClick } = this.props;
     const isOpen = preData.opening_hours && preData.opening_hours.open_now;
 
@@ -150,7 +176,7 @@ export class RatingCircle extends React.Component {
               : (
                 <React.Fragment>
                   <mc.RatingCircleRatingText circle={circle}>
-                    {data && data.rating ? `${data.rating}` : 'No rating'}
+                    {rating != null ? `${rating.toFixed(1)}` : 'No rating'}
                   </mc.RatingCircleRatingText>
                   <mc.RatingIconContainer circle={circle}>
                     <Ionicons name="ios-star" size={150} color="rgba(255,139,52,0.1)" />
