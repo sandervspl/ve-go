@@ -6,12 +6,12 @@ import * as s from './styles';
 export const ButtonContainer = styled.TouchableHighlight`
   padding: 10px 15px;
   border-width: 1px;
-  border-color: ${props => props.white ? s.color.white : s.color.green};
+  border-color: ${props => props.black ? s.color.black : s.color.green};
   border-radius: 20px;
 `;
 
 export const ButtonText = styled.Text`
-  color: ${props => props.white ? s.color.white : s.color.green};
+  color: ${props => props.black ? s.color.black : s.color.green};
 `;
 
 export const Button = props => (

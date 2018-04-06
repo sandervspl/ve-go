@@ -7,12 +7,12 @@ export const ratingColor = (rating) => {
   }
 
   if (rating <= 2) {
-    return color.red;
+    return color.lightRed;
   }
 
   if (rating < 4) {
-    return color.orange;
+    return color.lightOrange;
   }
 
-  return color.green;
+  return color.lightGreen;
 };

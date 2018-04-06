@@ -32,7 +32,7 @@ export const VenueDetails = (props) => {
             )}
             {props.data.website && (
               <c.Button
-                white
+                black
                 onPress={props.onMapsClick}
                 style={{ marginTop: 10 }}
               >

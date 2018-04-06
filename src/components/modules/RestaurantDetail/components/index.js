@@ -72,7 +72,7 @@ export const CircleTextContainer = styled.View`
 `;
 
 export const CircleText = styled.Text`
-  color: ${props => props.small ? s.color.lightgray : s.color.black};
+  color: ${props => props.small ? s.color.darkGray : s.color.black};
   font-size: ${props => props.small ? 17 : 30}px;
   ${props => props.bold && 'font-weight: bold'};
 `;
@@ -102,11 +102,11 @@ export const ContentContainer = styled.View`
 
 export const VenueInfoContainer = styled.View`
   width: 100%;
-  background-color: ${s.color.darkGreen};
+  background-color: ${s.color.almondMilk};
 `;
 
 export const InfoText = styled.Text`
-  color: ${props => props.light ? s.color.lightgray : s.color.white};
+  color: ${props => props.light ? s.color.darkGray : s.color.black};
   font-size: 16px;
 `;
 
