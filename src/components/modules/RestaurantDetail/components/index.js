@@ -83,6 +83,7 @@ export const ButtonsContainer = styled.View`
   justify-content: flex-start;
   flex-direction: row;
   bottom: 20px;
+  min-height: 38px;
 `;
 
 export const DetailButton = styled(c.Button)`

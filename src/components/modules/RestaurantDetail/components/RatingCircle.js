@@ -109,6 +109,11 @@ export class RatingCircle extends React.Component {
     // get first available period if a next day period is not available
     if (period == null) {
       const { day, time } = data.opening_hours.periods[0].open;
+
+      if (!data.opening_hours.weekday_text[day - 1]) {
+        return null;
+      }
+
       const weekday = data.opening_hours.weekday_text[day - 1].split(':')[0];
 
       return `Opens on ${weekday} at ${time.substr(0, 2)}:${time.substr(2, time.length)}`;
@@ -210,21 +215,23 @@ export class RatingCircle extends React.Component {
             </mc.CircleText>
           </mc.CircleTextContainer>
 
-          {data != null && (
-            <mc.ButtonsContainer>
-              {data.formatted_phone_number && (
-                <mc.DetailButton onPress={onPhoneClick}>
-                  Call
+          <mc.ButtonsContainer>
+            {data != null && (
+              <React.Fragment>
+                {data.formatted_phone_number && (
+                  <mc.DetailButton onPress={onPhoneClick}>
+                    Call
+                  </mc.DetailButton>
+                )}
+                <mc.DetailButton onPress={onWebsiteClick}>
+                  Website
                 </mc.DetailButton>
-              )}
-              <mc.DetailButton onPress={onWebsiteClick}>
-                Website
-              </mc.DetailButton>
-              <mc.DetailButton invert={saved} last onPress={onFavoriteClick}>
-                {saved ? 'Favorited' : 'Favorite'}
-              </mc.DetailButton>
-            </mc.ButtonsContainer>
-          )}
+                <mc.DetailButton invert={saved} last onPress={onFavoriteClick}>
+                  {saved ? 'Favorited' : 'Favorite'}
+                </mc.DetailButton>
+              </React.Fragment>
+            )}
+          </mc.ButtonsContainer>
         </mc.RatingCircleBottomContainer>
       </Svg>
     );
