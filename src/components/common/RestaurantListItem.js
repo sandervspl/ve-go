@@ -1,11 +1,11 @@
 import React from 'react';
 import PT from 'prop-types';
 import { TouchableWithoutFeedback } from 'react-native';
-import * as c from '../../../common';
-import * as s from '../../../common/styles';
-import { getDistanceFromLatLonInM } from '../../../../helpers';
+import * as c from './index';
+import * as s from './styles';
+import { getDistanceFromLatLonInM } from '../../helpers';
 
-class RestaurantListItem extends React.Component {
+export class RestaurantListItem extends React.Component {
   state = {
     pressed: false,
   };
@@ -83,5 +83,3 @@ RestaurantListItem.propTypes = {
     lon: PT.number,
   }),
 };
-
-export default RestaurantListItem;

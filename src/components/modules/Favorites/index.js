@@ -3,7 +3,6 @@ import { ActivityIndicator } from 'react-native';
 import { withNavigationFocus } from 'react-navigation-is-focused-hoc';
 import * as c from '../../common';
 import { asyncStorage } from '../../../helpers';
-import RestaurantListItem from '../Restaurants/components/RestaurantListItem';
 
 class Favorites extends React.Component {
   static navigationOptions = ({ navigation }) => ({
@@ -56,7 +55,7 @@ class Favorites extends React.Component {
           ) : (
             <c.List>
               {favorites && favorites.map(fav => (
-                <RestaurantListItem
+                <c.RestaurantListItem
                   key={fav.place_id}
                   data={fav}
                   onPress={this.toDetailPage}

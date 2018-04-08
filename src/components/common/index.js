@@ -6,6 +6,7 @@ const s = bind(styles);
 
 export { PopupTopBar } from './PopupTopBar';
 export { Button } from './Button';
+export { RestaurantListItem } from './RestaurantListItem';
 
 export const MainView = styled.View`
   min-height: 100%;

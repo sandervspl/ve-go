@@ -1,14 +1,13 @@
 import React from 'react';
 import PT from 'prop-types';
 import * as c from '../../../common';
-import ListItem from './RestaurantListItem';
 
 const RestaurantsList = ({ data, toDetailPage, location }) => {
   return (
     <c.List>
       {data.length === 0 ? null : (
         data.map(restaurant => (
-          <ListItem
+          <c.RestaurantListItem
             key={restaurant.place_id}
             data={restaurant}
             onPress={toDetailPage}

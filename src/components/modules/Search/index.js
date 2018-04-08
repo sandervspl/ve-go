@@ -6,7 +6,6 @@ import qs from 'qs';
 import * as c from '../../common';
 import { GOOGLE_MAPS_KEY } from '../../../secret';
 import { apiConfig } from '../../../helpers';
-import RestaurantListItem from '../Restaurants/components/RestaurantListItem';
 
 class Search extends React.Component {
   static navigationOptions = ({ navigation }) => ({
@@ -111,7 +110,7 @@ class Search extends React.Component {
           ) : (
             <c.List>
               {results != null && results.map(item => (
-                <RestaurantListItem
+                <c.RestaurantListItem
                   key={item.place_id}
                   data={item}
                   onPress={this.toDetailPage}
