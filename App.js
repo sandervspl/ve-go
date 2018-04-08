@@ -4,6 +4,7 @@ import { StackNavigator, TabNavigator, TabBarBottom } from 'react-navigation';
 import { updateFocus } from 'react-navigation-is-focused-hoc';
 import { Ionicons } from '@expo/vector-icons';
 import * as m from './src/components/modules';
+import * as s from './src/components/common/styles';
 
 const headerStyle = {
   backgroundColor: '#FFFFFF',
@@ -60,7 +61,7 @@ const AppNavigator = TabNavigator({
   tabBarComponent: TabBarBottom,
   tabBarPosition: 'bottom',
   tabBarOptions: {
-    activeTintColor: '#5bc73f',
+    activeTintColor: s.color.green,
     inactiveTintColor: 'gray',
   },
   animationEnabled: false,
