@@ -4,7 +4,7 @@ import { ActivityIndicator, Linking } from 'react-native';
 import call from 'react-native-phone-call';
 import * as c from '../../common';
 import * as mc from './components';
-import { apiConfig, getDistanceFromLatLonInM } from '../../../helpers';
+import { apiConfig, asyncStorage } from '../../../helpers';
 import DefaultImage from '../../../static/images/default-header-image.jpg';
 
 class RestaurantDetail extends React.Component {
@@ -21,48 +21,53 @@ class RestaurantDetail extends React.Component {
     data: null,
     photoUrl: null,
     photoLoading: false,
+    saved: null,
   };
 
   async componentDidMount() {
-    const { preFetchData } = this.props.navigation.state.params;
+    try {
+      const { preFetchData } = this.props.navigation.state.params;
 
-    this.setState({ loading: true });
+      this.setState({ loading: true });
 
-    // fetch venue information
-    const venueResponse = await fetch(`${apiConfig.url}/vegan/restaurant/${preFetchData.place_id}`);
-    const venueData = await venueResponse.json();
+      // fetch venue information
+      const venueResponse = await fetch(`${apiConfig.url}/vegan/restaurant/${preFetchData.place_id}`);
+      const venueData = await venueResponse.json();
+      let saved = false;
 
-    this.setState({
-      loading: false,
-      data: venueData,
-    });
-
-    // fetch venue photos with reference
-    if (venueData.photos && venueData.photos[0]) {
-      this.setState({
-        photoLoading: true,
-      });
-
-      const photosResponse = await fetch(`${apiConfig.url}/vegan/restaurant/photo/${venueData.photos[0].photo_reference}`);
-      const photoData = await photosResponse.json();
+      // check if venue is saved as favorite
+      if (await asyncStorage.isFavorited(venueData.place_id)) {
+        saved = true;
+      }
 
       this.setState({
-        photoUrl: photoData.url,
-        photoLoading: false,
+        loading: false,
+        data: venueData,
+        saved,
       });
+
+      // fetch venue photos with reference
+      if (venueData.photos && venueData.photos[0]) {
+        try {
+          this.setState({
+            photoLoading: true,
+          });
+
+          const photosResponse = await fetch(`${apiConfig.url}/vegan/restaurant/photo/${venueData.photos[0].photo_reference}`);
+          const photoData = await photosResponse.json();
+
+          this.setState({
+            photoUrl: photoData.url,
+            photoLoading: false,
+          });
+        } catch (e) {
+          console.log(e);
+        }
+      }
+    } catch (e) {
+      console.log(e);
     }
   }
-
-  getPriceLevelString = (level) => {
-    switch (level) {
-      case 0: return 'Free';
-      case 1: return '$';
-      case 2: return '$$';
-      case 3: return '$$$';
-      case 4: return '$$$$';
-      default: return 'No price level';
-    }
-  };
 
   onMapsClick = () => {
     Linking.openURL(this.state.data.url)
@@ -79,8 +84,19 @@ class RestaurantDetail extends React.Component {
       .catch(e => console.error(e));
   };
 
+  onFavoriteClick = async () => {
+    // eslint-disable-next-line
+    const { place_id } = this.state.data;
+
+    const saved = await asyncStorage.favorite(place_id);
+
+    if (saved) {
+      this.setState({ saved });
+    }
+  };
+
   render() {
-    const { loading, photoLoading, data, photoUrl } = this.state;
+    const { loading, photoLoading, data, photoUrl, saved } = this.state;
     const { preFetchData, location } = this.props.navigation.state.params;
     const photoSrc = photoUrl != null
       ? { uri: photoUrl }
@@ -95,6 +111,8 @@ class RestaurantDetail extends React.Component {
             preData={preFetchData}
             onWebsiteClick={this.onWebsiteClick}
             onPhoneClick={this.onPhoneClick}
+            onFavoriteClick={this.onFavoriteClick}
+            saved={saved}
           />
 
           <mc.BigImageHeaderContainer>

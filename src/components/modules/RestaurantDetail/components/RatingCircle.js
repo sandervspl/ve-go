@@ -126,7 +126,7 @@ export class RatingCircle extends React.Component {
   render() {
     const { circle } = this;
     const { rating } = this.state;
-    const { preData, data, loading, onWebsiteClick, onPhoneClick } = this.props;
+    const { preData, data, loading, saved, onWebsiteClick, onPhoneClick, onFavoriteClick } = this.props;
     const isOpen = preData.opening_hours && preData.opening_hours.open_now;
 
     return (
@@ -206,8 +206,11 @@ export class RatingCircle extends React.Component {
                   Call
                 </mc.DetailButton>
               )}
-              <mc.DetailButton last onPress={onWebsiteClick}>
+              <mc.DetailButton onPress={onWebsiteClick}>
                 Website
+              </mc.DetailButton>
+              <mc.DetailButton invert={saved} last onPress={onFavoriteClick}>
+                {saved ? 'Favorited' : 'Favorite'}
               </mc.DetailButton>
             </mc.ButtonsContainer>
           )}
