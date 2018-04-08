@@ -56,7 +56,22 @@ class AsyncStorageHelper {
   };
 
   unfavorite = async (placeId) => {
-    // TODO
+    try {
+      const favorites = await this.getFavorites();
+
+      if (favorites) {
+        const newFavorites = favorites.filter(id => id !== placeId);
+        await this.setItem(this.keys.favorites, newFavorites);
+
+        return true;
+      }
+
+      return false;
+    } catch (e) {
+      console.log(e);
+
+      return false;
+    }
   };
 
   getFavorites = async () => {
