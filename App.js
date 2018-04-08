@@ -15,20 +15,6 @@ const RestaurantsStack = StackNavigator({
 }, {
   navigationOptions: {
     headerStyle,
-    // cardStyle: {
-    //   backgroundColor: '#FFF',
-    // },
-    // containerStyle: {
-    //   backgroundColor: '#FFF',
-    // },
-    // transitionConfig: () => ({
-    //   containerStyle: {
-    //     backgroundColor: '#FFF',
-    //   },
-    //   cardStyle: {
-    //     backgroundColor: '#FFF',
-    //   },
-    // }),
   },
 });
 
@@ -44,7 +30,6 @@ export default TabNavigator({
   Favorites: { screen: FavoritesStack },
 }, {
   navigationOptions: ({ navigation }) => ({
-    // eslint-disable-next-line
     tabBarIcon: ({ focused, tintColor }) => {
       const { routeName } = navigation.state;
       let iconName;
@@ -58,6 +43,7 @@ export default TabNavigator({
       // icon component from react-native-vector-icons
       return <Ionicons name={iconName} size={25} color={tintColor} />;
     },
+    title: navigation.state.routeName,
   }),
   tabBarComponent: TabBarBottom,
   tabBarPosition: 'bottom',
