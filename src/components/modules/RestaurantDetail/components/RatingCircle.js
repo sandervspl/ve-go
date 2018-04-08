@@ -127,7 +127,10 @@ export class RatingCircle extends React.Component {
     const { circle } = this;
     const { rating } = this.state;
     const { preData, data, loading, saved, onWebsiteClick, onPhoneClick, onFavoriteClick } = this.props;
-    const isOpen = preData.opening_hours && preData.opening_hours.open_now;
+    const isOpen = (
+      (preData.opening_hours && preData.opening_hours.open_now) ||
+      (data && data.opening_hours && data.opening_hours.open_now)
+    );
 
     return (
       <Svg

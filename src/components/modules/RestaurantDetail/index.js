@@ -86,11 +86,16 @@ class RestaurantDetail extends React.Component {
 
   onFavoriteClick = async () => {
     // eslint-disable-next-line
-    const { place_id } = this.state.data;
+    const { place_id, name, vicinity } = this.state.data;
     const isFavorited = await asyncStorage.isFavorited(place_id);
 
     if (!isFavorited) {
-      const saved = await asyncStorage.favorite(place_id);
+      const favoriteDetails = {
+        place_id,
+        name,
+        vicinity,
+      };
+      const saved = await asyncStorage.favorite(favoriteDetails);
 
       if (saved) {
         this.setState({ saved });

@@ -60,7 +60,7 @@ class AsyncStorageHelper {
       const favorites = await this.getFavorites();
 
       if (favorites) {
-        const newFavorites = favorites.filter(id => id !== placeId);
+        const newFavorites = favorites.filter(fav => fav.place_id !== placeId);
         await this.setItem(this.keys.favorites, newFavorites);
 
         return true;
@@ -81,7 +81,7 @@ class AsyncStorageHelper {
       return false;
     }
 
-    return favorites;
+    return favorites.sort((a, b) => a.name > b.name);
   };
 
   isFavorited = async (placeId) => {
@@ -91,7 +91,7 @@ class AsyncStorageHelper {
       return false;
     }
 
-    return !!favorites.find(id => id === placeId);
+    return !!favorites.find(fav => fav.place_id === placeId);
   };
 }
 

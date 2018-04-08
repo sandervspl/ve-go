@@ -1,7 +1,10 @@
 import React from 'react';
+import { NetInfo } from 'react-native';
 import { StackNavigator, TabNavigator, TabBarBottom } from 'react-navigation';
+import { updateFocus } from 'react-navigation-is-focused-hoc';
 import { Ionicons } from '@expo/vector-icons';
 import * as m from './src/components/modules';
+import * as c from './src/components/common';
 
 const headerStyle = {
   backgroundColor: '#FFFFFF',
@@ -25,7 +28,7 @@ const FavoritesStack = StackNavigator({
   navigationOptions: { headerStyle },
 });
 
-export default TabNavigator({
+const AppNavigator = TabNavigator({
   Restaurants: { screen: RestaurantsStack },
   Favorites: { screen: FavoritesStack },
 }, {
@@ -55,65 +58,36 @@ export default TabNavigator({
   swipeEnabled: false,
 });
 
-// export default class App extends React.Component {
-//   state = {
-//     online: null,
-//     activeTab: 1,
-//   };
-//
-//   componentDidMount() {
-//     NetInfo.isConnected.addEventListener(
-//       'connectionChange',
-//       this.onConnectionChange,
-//     );
-//   }
-//
-//   componentWillUnmount() {
-//     NetInfo.isConnected.removeEventListener(
-//       'connectionChange',
-//       this.onConnectionChange,
-//     );
-//   }
-//
-//   onConnectionChange = (connected) => {
-//     this.setState({
-//       online: connected,
-//     });
-//   };
-//
-//   switchToTab = (id) => {
-//     this.setState({
-//       activeTab: id,
-//     });
-//   };
-//
-//   render() {
-//     const { online, activeTab } = this.state;
-//
-//     return (
-//       <c.Main>
-//         {online === false && (
-//           <c.PopupTopBar type="error">You are offline.</c.PopupTopBar>
-//         )}
-//
-//         <TabBarIOS>
-//           <TabBarIOS.Item
-//             selected={activeTab === 1}
-//             onPress={() => this.switchToTab(1)}
-//             systemIcon="search"
-//             style={{ marginBottom: 50 }}
-//           >
-//             <m.Restaurants />
-//           </TabBarIOS.Item>
-//           <TabBarIOS.Item
-//             selected={activeTab === 2}
-//             onPress={() => this.switchToTab(2)}
-//             systemIcon="favorites"
-//           >
-//             <m.Favorites />
-//           </TabBarIOS.Item>
-//         </TabBarIOS>
-//       </c.Main>
-//     );
-//   }
-// }
+export default class App extends React.Component {
+  state = {
+    online: null,
+  };
+
+  componentDidMount() {
+    NetInfo.isConnected.addEventListener(
+      'connectionChange',
+      this.onConnectionChange,
+    );
+  }
+
+  componentWillUnmount() {
+    NetInfo.isConnected.removeEventListener(
+      'connectionChange',
+      this.onConnectionChange,
+    );
+  }
+
+  onConnectionChange = (connected) => {
+    this.setState({
+      online: connected,
+    });
+  };
+
+  render() {
+    const { online } = this.state;
+
+    return (
+      <AppNavigator onNavigationStateChange={(prevState, curState) => updateFocus(curState)} />
+    );
+  }
+}

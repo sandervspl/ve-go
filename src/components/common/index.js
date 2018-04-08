@@ -8,6 +8,7 @@ export { PopupTopBar } from './PopupTopBar';
 export { Button } from './Button';
 
 export const MainView = styled.View`
+  min-height: 100%;
   background-color: ${styles.color.white};
   ${props => props.height && `height: ${props.height}`};
 `;
