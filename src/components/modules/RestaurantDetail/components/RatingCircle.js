@@ -33,8 +33,10 @@ export class RatingCircle extends React.Component {
           decimals: 2,
           duration: 1.5,
           options: {},
-          onCount: num => this.setState({ rating: num }),
-        }).start();
+          onCount: this.handleCountUp,
+        });
+
+        this.countUp.start();
       }
     }
   }
@@ -44,6 +46,12 @@ export class RatingCircle extends React.Component {
       this.countUp.pauseResume();
     }
   }
+
+  handleCountUp = (num) => {
+    if (!this.props.stop) {
+      this.setState({ rating: num });
+    }
+  };
 
   getRatingCircumference = () => {
     const { rating } = this.state;

@@ -2,6 +2,7 @@ import React from 'react';
 import PT from 'prop-types';
 import { ActivityIndicator, Linking } from 'react-native';
 import call from 'react-native-phone-call';
+import { withNavigationFocus } from 'react-navigation-is-focused-hoc';
 import * as c from '../../common';
 import * as mc from './components';
 import { apiConfig, asyncStorage } from '../../../helpers';
@@ -53,7 +54,8 @@ class RestaurantDetail extends React.Component {
             photoLoading: true,
           });
 
-          const photosResponse = await fetch(`${apiConfig.url}/vegan/restaurant/photo/${venueData.photos[0].photo_reference}`);
+          const photoRef = venueData.photos[0].photo_reference;
+          const photosResponse = await fetch(`${apiConfig.url}/vegan/restaurant/photo/${photoRef}`);
           const photoData = await photosResponse.json();
 
           this.setState({
@@ -127,6 +129,7 @@ class RestaurantDetail extends React.Component {
             onPhoneClick={this.onPhoneClick}
             onFavoriteClick={this.onFavoriteClick}
             saved={saved}
+            stop={!this.props.isFocused}
           />
 
           <mc.BigImageHeaderContainer>
@@ -173,4 +176,4 @@ RestaurantDetail.propTypes = {
   }),
 };
 
-export default RestaurantDetail;
+export default withNavigationFocus(RestaurantDetail);
