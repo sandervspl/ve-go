@@ -1,5 +1,5 @@
 import React from 'react';
-import { ActivityIndicator } from 'react-native';
+import { ActivityIndicator, Text } from 'react-native';
 import { withNavigationFocus } from 'react-navigation-is-focused-hoc';
 import * as c from '../../common';
 import { asyncStorage } from '../../../helpers';
@@ -14,18 +14,30 @@ class Favorites extends React.Component {
     favorites: null,
   };
 
-  async componentDidMount() {
-    const favorites = await asyncStorage.getFavorites();
-    this.setState({ favorites });
+  componentDidMount() {
+    this.getFavorites();
   }
 
-  async componentWillReceiveProps(nextProps) {
+  componentWillReceiveProps(nextProps) {
     // screen enter -- refresh data
     if (!this.props.isFocused && nextProps.isFocused) {
-      const favorites = await asyncStorage.getFavorites();
-      this.setState({ favorites });
+      this.getFavorites();
     }
   }
+
+  getFavorites = () => {
+    this.setState({
+      favorites: null,
+      loading: true,
+    }, async () => {
+      const favorites = await asyncStorage.getFavorites();
+
+      this.setState({
+        favorites,
+        loading: false,
+      });
+    });
+  };
 
   toDetailPage = (data) => {
     const { lat, lon } = this.state;
@@ -38,10 +50,11 @@ class Favorites extends React.Component {
 
   render() {
     const { favorites, loading } = this.state;
+    const noFavorites = !favorites || favorites.length === 0;
 
     return (
       <c.MainView>
-        <c.ScrollContainer>
+        <c.ScrollContainer fullHeight={noFavorites}>
           <c.Header>
             <c.ContainerWithBorder>
               <c.HugeTitle>Favorites</c.HugeTitle>
@@ -54,7 +67,7 @@ class Favorites extends React.Component {
             </c.CenterView>
           ) : (
             <c.List>
-              {favorites && favorites.map(fav => (
+              {!noFavorites && favorites.map(fav => (
                 <c.RestaurantListItem
                   key={fav.place_id}
                   data={fav}
@@ -62,6 +75,12 @@ class Favorites extends React.Component {
                 />
               ))}
             </c.List>
+          )}
+
+          {!loading && noFavorites && (
+            <c.CenterView>
+              <Text>No favorites yet.</Text>
+            </c.CenterView>
           )}
         </c.ScrollContainer>
       </c.MainView>
