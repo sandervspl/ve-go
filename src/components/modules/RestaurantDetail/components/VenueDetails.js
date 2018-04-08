@@ -25,7 +25,7 @@ export const VenueDetails = (props) => {
         ) : (
           <React.Fragment>
             {props.data.vicinity && <mc.InfoText>{props.data.vicinity}</mc.InfoText>}
-            {props.location && (
+            {props.location && props.location.lat && (
               <mc.InfoText light>
                 {distance()} meter away ({minWalk()} minute walk)
               </mc.InfoText>
