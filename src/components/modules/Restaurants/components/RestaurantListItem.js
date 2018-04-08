@@ -38,7 +38,7 @@ class RestaurantListItem extends React.Component {
 
             {data.vicinity && <c.ListItemText pressed={pressed}>{data.vicinity}</c.ListItemText>}
 
-            {data.geometry && data.geometry.location && (
+            {location && data.geometry && data.geometry.location && (
               <c.ListItemText pressed={pressed}>
                 {getDistanceFromLatLonInM(
                   data.geometry.location.lat,

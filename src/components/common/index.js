@@ -21,6 +21,11 @@ export const FlexView = styled.View`
   background-color: #FFFFFF;
 `;
 
+export const PaddedView = styled.View`
+  padding: 0 20px;
+  width: 100%;
+`;
+
 export const ScrollContainer = styled.ScrollView.attrs({
   contentContainerStyle: props => ({
     alignItems: 'flex-start',
@@ -33,13 +38,13 @@ export const ScrollContainer = styled.ScrollView.attrs({
 })``; // not a typo!
 
 export const ContainerWithBorder = styled.View`
-  margin-left: 20px;
   padding-bottom: ${props => props.paddingBottom ? props.paddingBottom : 0};
-  border-bottom-color: lightgray;
+  border-bottom-color: ${styles.color.lightgray};
   border-bottom-width: 1px;
 `;
 
 export const Header = styled.View`
+  margin-left: 20px;
   width: 100%;
 `;
 
@@ -58,14 +63,16 @@ export const HugeTitle = styled.Text`
 `;
 
 export const BigTitle = styled(HugeTitle)`
-  margin-bottom: 10px;
   font-size: 30px;
-  font-weight: bold;
 `;
 
 export const Title = styled.Text`
   ${props => !props.noMargin && 'margin-top: 20px'};
   font-size: 20px;
+`;
+
+export const SmallTitle = styled(HugeTitle)`
+  font-size: 16px;
 `;
 
 export const ErrorText = styled.Text`
@@ -78,6 +85,7 @@ export const List = styled.View`
 `;
 
 export const ListItem = styled.View`
+  padding-left: 20px;
   background-color: ${s.listItemBgColor};
 `;
 ListItem.defaultProps = {
@@ -101,3 +109,11 @@ export const ListItemTitle = styled(ListItemText)`
 ListItemTitle.defaultProps = {
   listItemTitleColor: 'default',
 };
+
+export const TextInput = styled.TextInput`
+  padding: 0 20px;
+  width: 100%;
+  height: 40px;
+  background-color: ${styles.color.lightestGray};
+  border-radius: 10px;
+`;

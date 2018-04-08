@@ -20,6 +20,13 @@ const RestaurantsStack = StackNavigator({
   },
 });
 
+const SearchStack = StackNavigator({
+  Search: { screen: m.Search },
+  Details: { screen: m.RestaurantDetail },
+}, {
+  navigationOptions: { headerStyle },
+});
+
 const FavoritesStack = StackNavigator({
   Favorites: { screen: m.Favorites },
   Details: { screen: m.RestaurantDetail },
@@ -29,16 +36,19 @@ const FavoritesStack = StackNavigator({
 
 const AppNavigator = TabNavigator({
   Nearby: { screen: RestaurantsStack },
+  Search: { screen: SearchStack },
   Favorites: { screen: FavoritesStack },
 }, {
   navigationOptions: ({ navigation }) => ({
     tabBarIcon: ({ focused, tintColor }) => {
       const { routeName } = navigation.state;
       let iconName;
-      if (routeName === 'Nearby') {
-        iconName = `ios-pin${focused ? '' : '-outline'}`;
-      } else if (routeName === 'Favorites') {
-        iconName = `ios-restaurant${focused ? '' : '-outline'}`;
+
+      switch (routeName) {
+        case 'Nearby': iconName = `ios-pin${focused ? '' : '-outline'}`; break;
+        case 'Favorites': iconName = `ios-restaurant${focused ? '' : '-outline'}`; break;
+        case 'Search': iconName = `ios-search${focused ? '' : '-outline'}`; break;
+        default: iconName = `ios-help-circle${focused ? '' : '-outline'}`;
       }
 
       // You can return any component that you like here! We usually use an

@@ -63,11 +63,11 @@ class RestaurantDetail extends React.Component {
             photoLoading: false,
           });
         } catch (e) {
-          console.log(e);
+          console.error(e);
         }
       }
     } catch (e) {
-      console.log(e);
+      console.error(e);
     }
   }
 

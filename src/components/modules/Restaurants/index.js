@@ -1,7 +1,8 @@
 // dependencies
 import React from 'react';
-import qs from 'qs';
 import { ActivityIndicator } from 'react-native';
+import { withNavigationFocus } from 'react-navigation-is-focused-hoc';
+import qs from 'qs';
 import * as c from '../../common';
 import * as mc from './components';
 import { apiConfig } from '../../../helpers';
@@ -35,6 +36,13 @@ class Restaurants extends React.Component {
         enableHighAccuracy: true,
       },
     );
+  }
+
+  async componentWillReceiveProps(nextProps) {
+    // screen exit
+    if (this.props.isFocused && !nextProps.isFocused) {
+      navigator.geolocation.clearWatch(this.watchId);
+    }
   }
 
   componentWillUnmount() {
@@ -163,4 +171,4 @@ class Restaurants extends React.Component {
 
 Restaurants.propTypes = {};
 
-export default Restaurants;
+export default withNavigationFocus(Restaurants);

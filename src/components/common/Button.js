@@ -10,7 +10,7 @@ const styles = {
     black: s.color.black,
   },
   background: {
-    default: s.color.white,
+    default: 'transparent',
     invert: s.color.green,
   },
   color: {
