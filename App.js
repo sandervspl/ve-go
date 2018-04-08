@@ -3,6 +3,7 @@ import { NetInfo } from 'react-native';
 import { StackNavigator, TabNavigator, TabBarBottom } from 'react-navigation';
 import { updateFocus } from 'react-navigation-is-focused-hoc';
 import { Ionicons } from '@expo/vector-icons';
+import * as c from './src/components/common';
 import * as m from './src/components/modules';
 import * as s from './src/components/common/styles';
 
@@ -93,11 +94,19 @@ export default class App extends React.Component {
     });
   };
 
+  onNavigation = (prevState, curState) => updateFocus(curState);
+
   render() {
     const { online } = this.state;
 
     return (
-      <AppNavigator onNavigationStateChange={(prevState, curState) => updateFocus(curState)} />
+      <React.Fragment>
+        {online === false && (
+          <c.PopupTopBar type="error">You are offline.</c.PopupTopBar>
+        )}
+
+        <AppNavigator onNavigationStateChange={this.onNavigation} />
+      </React.Fragment>
     );
   }
 }

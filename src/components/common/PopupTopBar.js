@@ -5,7 +5,7 @@ import styled from 'styled-components';
 const Container = styled.View`
   flex: 1;
   position: absolute;
-  top: 20px;
+  bottom: 50px;
   left: 0;
   z-index: 2;
   padding: 15px;
@@ -19,7 +19,7 @@ const TextField = styled.Text`
   font-weight: bold;
 `;
 
-const PopupTopBar = ({ children, type }) => (
+export const PopupTopBar = ({ children, type }) => (
   <Container type={type}>
     <TextField>
       {children}
@@ -35,5 +35,3 @@ PopupTopBar.propTypes = {
 PopupTopBar.defaultProps = {
   type: 'default',
 };
-
-export default PopupTopBar;

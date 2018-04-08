@@ -74,7 +74,7 @@ class Search extends React.Component {
       }
     } catch (e) {
       this.setState({ loading: false });
-      console.error(e);
+      console.log(e);
     }
   }, 500);
 

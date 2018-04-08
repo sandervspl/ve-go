@@ -84,11 +84,11 @@ class Restaurants extends React.Component {
         });
       }
     } catch (e) {
-      console.error(e);
+      console.log(e);
 
       this.setState({
         loading: false,
-        error: e,
+        error: 'Unable to get restaurants.',
       });
     }
   };
@@ -141,34 +141,5 @@ class Restaurants extends React.Component {
     );
   }
 }
-
-// class Restaurants extends React.Component {
-//   toDetailPage = (navigator, { id, name }) => {
-//     navigator.push({
-//       component: m.RestaurantDetail,
-//       title: name,
-//       passProps: { id },
-//       leftButtonTitle: null,
-//     });
-//   };
-//
-//   render() {
-//     return (
-//       <NavigatorIOS
-//         initialRoute={{
-//           component: c.Overview,
-//           title: 'Restaurants',
-//           passProps: { toDetailPage: this.toDetailPage },
-//         }}
-//         style={{ flex: 1 }}
-//         barTintColor="#ffffff"
-//         shadowHidden
-//         translucent
-//       />
-//     );
-//   }
-// }
-
-Restaurants.propTypes = {};
 
 export default withNavigationFocus(Restaurants);

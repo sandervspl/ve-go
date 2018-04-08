@@ -2,7 +2,7 @@
   "expo": {
     "name": "Vegan Go",
     "icon": "./icon.png",
-    "version": "0.1.0",
+    "version": "0.2.0",
     "slug": "vegan-go",
     "sdkVersion": "25.0.0",
     "ios": {

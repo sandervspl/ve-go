@@ -1,6 +1,6 @@
 import React from 'react';
 import PT from 'prop-types';
-import { ActivityIndicator, Linking } from 'react-native';
+import { ActivityIndicator, Linking, NetInfo, Text } from 'react-native';
 import call from 'react-native-phone-call';
 import { withNavigationFocus } from 'react-navigation-is-focused-hoc';
 import * as c from '../../common';
@@ -23,67 +23,46 @@ class RestaurantDetail extends React.Component {
     photoUrl: null,
     photoLoading: false,
     saved: null,
+    error: null,
   };
 
-  async componentDidMount() {
-    try {
-      const { preFetchData } = this.props.navigation.state.params;
+  componentDidMount() {
+    // NetInfo.isConnected.addEventListener(
+    //   'connectionChange',
+    //   this.onConnectionChange,
+    // );
 
-      this.setState({ loading: true });
-
-      // fetch venue information
-      const venueResponse = await fetch(`${apiConfig.url}/vegan/restaurant/${preFetchData.place_id}`);
-      const venueData = await venueResponse.json();
-      let saved = false;
-
-      // check if venue is saved as favorite
-      if (await asyncStorage.isFavorited(venueData.place_id)) {
-        saved = true;
-      }
-
-      this.setState({
-        loading: false,
-        data: venueData,
-        saved,
-      });
-
-      // fetch venue photos with reference
-      if (venueData.photos && venueData.photos[0]) {
-        try {
-          this.setState({
-            photoLoading: true,
-          });
-
-          const photoRef = venueData.photos[0].photo_reference;
-          const photosResponse = await fetch(`${apiConfig.url}/vegan/restaurant/photo/${photoRef}`);
-          const photoData = await photosResponse.json();
-
-          this.setState({
-            photoUrl: photoData.url,
-            photoLoading: false,
-          });
-        } catch (e) {
-          console.error(e);
-        }
-      }
-    } catch (e) {
-      console.error(e);
-    }
+    this.getRestaurantData();
   }
+
+  // componentWillUnmount() {
+  //   NetInfo.isConnected.removeEventListener(
+  //     'connectionChange',
+  //     this.onConnectionChange,
+  //   );
+  // }
+  //
+  // onConnectionChange = (connected) => {
+  //   const { loading, data } = this.state;
+  //
+  //   if (!loading && data == null && connected) {
+  //     this.getRestaurantData();
+  //   }
+  // };
 
   onMapsClick = () => {
     Linking.openURL(this.state.data.url)
-      .catch(e => console.error(e));
+      .catch(e => console.log(e));
   };
 
   onWebsiteClick = () => {
     Linking.openURL(this.state.data.website)
-      .catch(e => console.error(e));
+      .catch(e => console.log(e));
   };
 
   onPhoneClick = () => {
     call({ number: this.state.data.formatted_phone_number, prompt: true })
-      .catch(e => console.error(e));
+      .catch(e => console.log(e));
   };
 
   onFavoriteClick = async () => {
@@ -111,16 +90,72 @@ class RestaurantDetail extends React.Component {
     }
   };
 
+  getRestaurantData = async () => {
+    try {
+      const { preFetchData } = this.props.navigation.state.params;
+
+      this.setState({ loading: true });
+
+      // fetch venue information
+      const venueResponse = await fetch(`${apiConfig.url}/vegan/restaurant/${preFetchData.place_id}`);
+      const venueData = await venueResponse.json();
+      let saved = false;
+
+      // check if venue is saved as favorite
+      if (await asyncStorage.isFavorited(venueData.place_id)) {
+        saved = true;
+      }
+
+      // store venuedata in state
+      this.setState({
+        loading: false,
+        data: venueData,
+        saved,
+      });
+
+      // fetch venue photos with reference
+      if (venueData.photos && venueData.photos[0]) {
+        try {
+          this.setState({
+            photoLoading: true,
+          });
+
+          const photoRef = venueData.photos[0].photo_reference;
+          const photosResponse = await fetch(`${apiConfig.url}/vegan/restaurant/photo/${photoRef}`);
+          const photoData = await photosResponse.json();
+
+          this.setState({
+            photoUrl: photoData.url,
+            photoLoading: false,
+          });
+        } catch (e) {
+          console.log(e);
+
+          this.setState({
+            loading: false,
+            photoLoading: false,
+            error: 'Unable to get photo.',
+          });
+        }
+      }
+    } catch (e) {
+      console.log(e);
+
+      this.setState({
+        loading: false,
+        error: 'Unable to get restaurant data.',
+      });
+    }
+  };
+
   render() {
-    const { loading, photoLoading, data, photoUrl, saved } = this.state;
+    const { loading, photoLoading, data, photoUrl, saved, error } = this.state;
     const { preFetchData, location } = this.props.navigation.state.params;
-    const photoSrc = photoUrl != null
-      ? { uri: photoUrl }
-      : DefaultImage;
+    const photoSrc = photoUrl != null ? { uri: photoUrl } : DefaultImage;
 
     return (
       <c.MainView height="100%">
-        <c.ScrollContainer>
+        <c.ScrollContainer fullHeight={loading}>
           <mc.RatingCircle
             data={data}
             loading={loading}
@@ -131,6 +166,12 @@ class RestaurantDetail extends React.Component {
             saved={saved}
             stop={!this.props.isFocused}
           />
+
+          {error && (
+            <c.CenterView>
+              <Text>{error}</Text>
+            </c.CenterView>
+          )}
 
           <mc.BigImageHeaderContainer>
             <mc.BigImageGradient colors={['rgba(255,255,255,1)', 'rgba(255,255,255,0)']} />
@@ -148,11 +189,13 @@ class RestaurantDetail extends React.Component {
             </mc.InnerImageContainer>
           </mc.BigImageHeaderContainer>
 
-          <mc.VenueDetails
-            data={data}
-            location={location}
-            onMapsClick={this.onMapsClick}
-          />
+          {data != null && (
+            <mc.VenueDetails
+              data={data}
+              location={location}
+              onMapsClick={this.onMapsClick}
+            />
+          )}
 
           {data != null && (
             <mc.Reviews data={data.reviews} />
