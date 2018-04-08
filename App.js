@@ -4,7 +4,6 @@ import { StackNavigator, TabNavigator, TabBarBottom } from 'react-navigation';
 import { updateFocus } from 'react-navigation-is-focused-hoc';
 import { Ionicons } from '@expo/vector-icons';
 import * as m from './src/components/modules';
-import * as c from './src/components/common';
 
 const headerStyle = {
   backgroundColor: '#FFFFFF',
@@ -29,15 +28,15 @@ const FavoritesStack = StackNavigator({
 });
 
 const AppNavigator = TabNavigator({
-  Restaurants: { screen: RestaurantsStack },
+  Nearby: { screen: RestaurantsStack },
   Favorites: { screen: FavoritesStack },
 }, {
   navigationOptions: ({ navigation }) => ({
     tabBarIcon: ({ focused, tintColor }) => {
       const { routeName } = navigation.state;
       let iconName;
-      if (routeName === 'Restaurants') {
-        iconName = `ios-list-box${focused ? '' : '-outline'}`;
+      if (routeName === 'Nearby') {
+        iconName = `ios-pin${focused ? '' : '-outline'}`;
       } else if (routeName === 'Favorites') {
         iconName = `ios-restaurant${focused ? '' : '-outline'}`;
       }
