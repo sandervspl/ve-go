@@ -53,7 +53,7 @@ export class RatingCircle extends React.Component {
     }
   };
 
-  getRatingCircumference = () => {
+  getRatingDashOffset = () => {
     const { rating } = this.state;
 
     if (rating == null) {
@@ -173,7 +173,7 @@ export class RatingCircle extends React.Component {
             stroke={this.getRatingColor()}
             strokeWidth={circle.strokeWidth}
             strokeDasharray={[circle.circumference]}
-            strokeDashoffset={this.getRatingCircumference()}
+            strokeDashoffset={this.getRatingDashOffset()}
           />
 
           {/* Inner cirle */}
