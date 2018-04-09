@@ -112,7 +112,7 @@ ListItemTitle.defaultProps = {
 };
 
 export const TextInput = styled.TextInput`
-  padding: 0 20px;
+  padding: 0 10px;
   width: 100%;
   height: 40px;
   background-color: ${styles.color.lightestGray};
