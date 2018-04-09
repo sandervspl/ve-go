@@ -73,23 +73,36 @@ export class RatingCircle extends React.Component {
       return null;
     }
 
+    // eslint-disable-next-line camelcase
+    const { periods, weekday_text } = data.opening_hours;
     const d = new Date();
     const curHours = d.getHours();
     let curDay = d.getDay();
-    let period = data.opening_hours.periods.find(p => p.open.day === curDay);
+    let period = periods.find(p => p.open.day === curDay);
     let openTime;
 
     // if current day has no information, get first opening time
     if (period == null) {
-      [period] = data.opening_hours.periods;
+      // get next period with open state
+      let dayNumIndex = -1;
+      let nextDayNum = curDay;
+      while (dayNumIndex === -1) {
+        // next day or wrap around if we exceed the amount of weekdays
+        nextDayNum = (nextDayNum + 1) % weekday_text.length;
+        dayNumIndex = periods.map(p => p.open.day).indexOf(nextDayNum);
+      }
 
-      // get weekday name from weekday_text array string
-      const weekday = data.opening_hours.weekday_text[period.open.day - 1].split(':')[0];
-      openTime = period.open.time;
+      // get the weekday string from weekday_text array
+      const [weekdayStr] = weekday_text[nextDayNum - 1].split(':');
 
-      return `Opens on ${weekday} at ${openTime.substr(0, 2)}:${openTime.substr(2, openTime.length)}`;
+      // get opening time for this day
+      openTime = periods[dayNumIndex].open.time;
+
+      return `Opens on ${weekdayStr} at ${openTime.substr(0, 2)}:${openTime.substr(2, openTime.length)}`;
     }
 
+
+    // get open/cose times for current day
     const closeTime = period.close.time;
     openTime = period.open.time;
 
@@ -104,17 +117,17 @@ export class RatingCircle extends React.Component {
 
     // venue is closed. Get times for next day (or wrap around to first index)
     curDay += 1;
-    period = data.opening_hours.periods.find(p => p.open.day === curDay);
+    period = periods.find(p => p.open.day === curDay);
 
     // get first available period if a next day period is not available
     if (period == null) {
-      const { day, time } = data.opening_hours.periods[0].open;
+      const { day, time } = periods[0].open;
 
-      if (!data.opening_hours.weekday_text[day - 1]) {
+      if (!weekday_text[day - 1]) {
         return null;
       }
 
-      const weekday = data.opening_hours.weekday_text[day - 1].split(':')[0];
+      const weekday = weekday_text[day - 1].split(':')[0];
 
       return `Opens on ${weekday} at ${time.substr(0, 2)}:${time.substr(2, time.length)}`;
     }
