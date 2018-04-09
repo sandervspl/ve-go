@@ -9,6 +9,7 @@ import * as mc from './index';
 export class RatingCircle extends React.Component {
   state = {
     rating: null,
+    openStateText: '',
   };
 
   // eslint-disable-next-line
@@ -26,6 +27,7 @@ export class RatingCircle extends React.Component {
 
   componentWillReceiveProps(nextProps) {
     if (this.props.data == null && nextProps.data != null) {
+      // start circle animation
       if (nextProps.data.rating) {
         this.countUp = new CountUp({
           startVal: 0.0,
@@ -38,6 +40,15 @@ export class RatingCircle extends React.Component {
 
         this.countUp.start();
       }
+    }
+  }
+
+  componentDidUpdate(prevProps) {
+    if (prevProps.data == null && this.props.data != null) {
+      // set open/close string
+      this.setState({
+        openStateText: this.getOpenStateString(),
+      });
     }
   }
 
@@ -82,7 +93,7 @@ export class RatingCircle extends React.Component {
     let openTime;
 
     // if current day has no information, or the venue is closed, get first opening time
-    if (period == null || (curHours > period.close.time.substr(0, 2))) {
+    if (period == null || curHours > period.close.time.substr(0, 2)) {
       // get next period with open state
       let dayNumIndex = -1;
       let nextDayNum = curDayNum;
@@ -110,11 +121,11 @@ export class RatingCircle extends React.Component {
     openTime = period.open.time;
 
     // get first two numbers of time (i.e. "09" from "0900") and make it a number
-    const openingTimeNum = Number(openTime.substr(0, 2));
-    const closeTimeNum = Number(closeTime.substr(0, 2));
+    const openTimeNum = openTime.substr(0, 2);
+    const closeTimeNum = closeTime.substr(0, 2);
 
     // venue is open -- return time until close
-    if (curHours >= openingTimeNum && curHours < closeTimeNum) {
+    if (curHours >= openTimeNum && curHours < closeTimeNum) {
       return `Open until ${closeTimeNum}:${closeTime.substr(2, closeTime.length)}`;
     }
 
@@ -138,7 +149,7 @@ export class RatingCircle extends React.Component {
 
   render() {
     const { circle } = this;
-    const { rating } = this.state;
+    const { rating, openStateText } = this.state;
     const { preData, data, loading, saved, onWebsiteClick, onPhoneClick, onFavoriteClick } = this.props;
     const isOpen = (
       (preData.opening_hours && preData.opening_hours.open_now) ||
@@ -211,7 +222,7 @@ export class RatingCircle extends React.Component {
               <Text style={{ fontWeight: 'bold', color: isOpen ? s.color.green : s.color.red }}>
                 {isOpen ? 'Now open' : isOpen != null ? 'Closed' : 'Opening times unavailable'}
               </Text>
-              {this.getOpenStateString() && ` · ${this.getOpenStateString()}`}
+              {openStateText && ` · ${openStateText}`}
             </mc.CircleText>
           </mc.CircleTextContainer>
 
