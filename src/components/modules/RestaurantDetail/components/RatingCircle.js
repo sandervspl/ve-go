@@ -77,12 +77,12 @@ export class RatingCircle extends React.Component {
     const { periods, weekday_text } = data.opening_hours;
     const d = new Date();
     const curHours = d.getHours();
-    let curDayNum = d.getDay();
-    let period = periods.find(p => p.open.day === curDayNum);
+    const curDayNum = d.getDay();
+    const period = periods.find(p => p.open.day === curDayNum);
     let openTime;
 
-    // if current day has no information, get first opening time
-    if (period == null) {
+    // if current day has no information, or the venue is closed, get first opening time
+    if (period == null || (curHours > period.close.time.substr(0, 2))) {
       // get next period with open state
       let dayNumIndex = -1;
       let nextDayNum = curDayNum;
@@ -113,29 +113,13 @@ export class RatingCircle extends React.Component {
     const openingTimeNum = Number(openTime.substr(0, 2));
     const closeTimeNum = Number(closeTime.substr(0, 2));
 
-    // venue is open.
+    // venue is open -- return time until close
     if (curHours >= openingTimeNum && curHours < closeTimeNum) {
-      return `Open until ${closeTime.substr(0, 2)}:${closeTime.substr(2, closeTime.length)}`;
+      return `Open until ${closeTimeNum}:${closeTime.substr(2, closeTime.length)}`;
     }
 
-    // venue is closed. Get times for next day (or wrap around to first index)
-    curDayNum += 1;
-    period = periods.find(p => p.open.day === curDayNum);
 
-    // get first available period if a next day period is not available
-    if (period == null) {
-      const { day, time } = periods[0].open;
-
-      if (!weekday_text[day - 1]) {
-        return null;
-      }
-
-      const weekday = weekday_text[day - 1].split(':')[0];
-
-      return `Opens on ${weekday} at ${time.substr(0, 2)}:${time.substr(2, time.length)}`;
-    }
-
-    // return next day opening time
+    // venue is open today but not yet -- return open time
     openTime = period.open.time;
 
     return `Opens at ${openTime.substr(0, 2)}:${openTime.substr(2, openTime.length)}`;
