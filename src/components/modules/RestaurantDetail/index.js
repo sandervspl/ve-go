@@ -195,9 +195,11 @@ class RestaurantDetail extends React.Component {
                 </c.CenterView>
               )}
 
-              {error == null && !photoLoading && !loading ? (
+              {error == null && !loading && !photoLoading && (
                 <mc.BigImage source={photoSrc} style={{ width: '100%', height: '100%' }} />
-              ) : (
+              )}
+
+              {loading || photoLoading && (
                 <c.CenterView>
                   <ActivityIndicator />
                 </c.CenterView>
