@@ -31,6 +31,14 @@ class RestaurantDetail extends React.Component {
     this.getRestaurantData();
   }
 
+  componentWillReceiveProps(nextProps) {
+    const { loading, data } = this.state;
+
+    if (!loading && data == null && !this.props.app.online && nextProps.app.online) {
+      this.getRestaurantData(nextProps);
+    }
+  }
+
   onMapsClick = () => {
     Linking.openURL(this.state.data.url).catch(e => console.log(e));
   };
@@ -68,9 +76,10 @@ class RestaurantDetail extends React.Component {
     }
   };
 
-  getRestaurantData = async () => {
-    if (!this.props.app.online) {
+  getRestaurantData = async (props = this.props) => {
+    if (!props.app.online) {
       this.setState({
+        loading: false,
         error: {
           type: 'data',
           emoji: '☹️',
@@ -84,7 +93,10 @@ class RestaurantDetail extends React.Component {
     try {
       const { preFetchData } = this.props.navigation.state.params;
 
-      this.setState({ loading: true });
+      this.setState({
+        loading: true,
+        error: null,
+      });
 
       // fetch venue information
       const venueResponse = await fetch(`${apiConfig.url}/vegan/restaurant/${preFetchData.place_id}`);
@@ -106,9 +118,7 @@ class RestaurantDetail extends React.Component {
       // fetch venue photos with reference
       if (venueData.photos && venueData.photos[0]) {
         try {
-          this.setState({
-            photoLoading: true,
-          });
+          this.setState({ photoLoading: true });
 
           const photoRef = venueData.photos[0].photo_reference;
           const photosResponse = await fetch(`${apiConfig.url}/vegan/restaurant/photo/${photoRef}`);
@@ -167,8 +177,11 @@ class RestaurantDetail extends React.Component {
 
           {error && error.type === 'data' && (
             <c.CenterView>
-              <c.Emoji>{error.emoji}</c.Emoji>
-              <Text>{error.text}</Text>
+              <c.Error>
+                <c.Emoji>{error.emoji}</c.Emoji>
+                <Text>{error.text}</Text>
+              </c.Error>
+              <c.Button onPress={this.getRestaurantData}>Retry</c.Button>
             </c.CenterView>
           )}
 

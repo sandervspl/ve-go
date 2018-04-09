@@ -1,6 +1,7 @@
 import React from 'react';
 import { ActivityIndicator, Text } from 'react-native';
 import { withNavigationFocus } from 'react-navigation-is-focused-hoc';
+import { connect } from 'react-redux';
 import qs from 'qs';
 import * as c from '../../common';
 import * as mc from './components';
@@ -38,9 +39,15 @@ class Restaurants extends React.Component {
   }
 
   async componentWillReceiveProps(nextProps) {
+    const { restaurantData, loading } = this.state;
+
     // screen exit
     if (this.props.isFocused && !nextProps.isFocused) {
       navigator.geolocation.clearWatch(this.watchId);
+    }
+
+    if (!loading && restaurantData.length === 0 && !this.props.app.online && nextProps.app.online) {
+      this.getNearbyRestaurants();
     }
   }
 
@@ -48,27 +55,12 @@ class Restaurants extends React.Component {
     navigator.geolocation.clearWatch(this.watchId);
   }
 
-  toDetailPage = (data) => {
-    const { lat, lon } = this.state;
-
-    this.props.navigation.navigate('Details', {
-      preFetchData: data,
-      location: { lat, lon },
-    });
-  };
-
-  watchPositionSuccess = async ({ coords }) => {
+  getNearbyRestaurants = async () => {
     try {
-      this.setState({
-        lat: coords.latitude,
-        lon: coords.longitude,
-        loading: true,
-      });
+      this.setState({ loading: true, error: null });
 
-      const queries = qs.stringify({
-        lat: coords.latitude,
-        lon: coords.longitude,
-      });
+      const { lat, lon } = this.state;
+      const queries = qs.stringify({ lat, lon });
       const response = await fetch(`${apiConfig.url}/vegan?${queries}`);
       const data = await response.json();
 
@@ -101,18 +93,34 @@ class Restaurants extends React.Component {
     }
   };
 
-  watchPositionError = (err) => {
-    this.setState({
-      error: err,
-    });
-  };
-
   handleScroll = (event) => {
     if (event.nativeEvent.contentOffset.y >= 60) {
       this.props.navigation.setParams({ showTitle: true });
     } else {
       this.props.navigation.setParams({ showTitle: false });
     }
+  };
+
+  watchPositionError = (err) => {
+    this.setState({
+      error: err,
+    });
+  };
+
+  watchPositionSuccess = async ({ coords }) => {
+    this.setState({
+      lat: coords.latitude,
+      lon: coords.longitude,
+    }, this.getNearbyRestaurants);
+  };
+
+  toDetailPage = (data) => {
+    const { lat, lon } = this.state;
+
+    this.props.navigation.navigate('Details', {
+      preFetchData: data,
+      location: { lat, lon },
+    });
   };
 
   render() {
@@ -145,8 +153,11 @@ class Restaurants extends React.Component {
 
           {error && (
             <c.CenterView>
-              <c.Emoji>{error.emoji}</c.Emoji>
-              <Text>{error.text}</Text>
+              <c.Error>
+                <c.Emoji>{error.emoji}</c.Emoji>
+                <Text>{error.text}</Text>
+              </c.Error>
+              <c.Button onPress={this.getNearbyRestaurants}>Retry</c.Button>
             </c.CenterView>
           )}
         </c.ScrollContainer>
@@ -155,4 +166,8 @@ class Restaurants extends React.Component {
   }
 }
 
-export default withNavigationFocus(Restaurants);
+const mapStateToProps = state => ({
+  app: state.app,
+});
+
+export default connect(mapStateToProps)(withNavigationFocus(Restaurants));

@@ -21,7 +21,9 @@ const styles = {
 };
 
 export const ButtonContainer = styled.TouchableHighlight`
+  align-items: center;
   padding: 10px 15px;
+  min-width: 80px;
   border-width: 1px;
   border-color: ${styledProps(styles.borderColor, 'border-color')};
   background-color: ${styledProps(styles.background, 'background')};

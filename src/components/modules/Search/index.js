@@ -21,6 +21,14 @@ class Search extends React.Component {
     error: null,
   };
 
+  componentWillReceiveProps(nextProps) {
+    const { loading, results } = this.state;
+
+    if (!loading && results == null && !this.props.app.online && nextProps.app.online) {
+      this.search(nextProps);
+    }
+  }
+
   toDetailPage = (data) => {
     const { lat, lon } = this.state;
 
@@ -30,13 +38,14 @@ class Search extends React.Component {
     });
   };
 
-  search = _.debounce(async () => {
-    if (!this.props.app.online) {
+  search = _.debounce(async (props = this.props) => {
+    if (!props.app.online) {
       this.setState({
         results: null,
         error: {
           emoji: '☹️',
           text: 'Cannot search while offline.',
+          retry: true,
         },
       });
 
@@ -137,8 +146,11 @@ class Search extends React.Component {
 
           {error && (
             <c.CenterView>
-              <c.Emoji big>{error.emoji}</c.Emoji>
-              <Text>{error.text}</Text>
+              <c.Error>
+                <c.Emoji big>{error.emoji}</c.Emoji>
+                <Text>{error.text}</Text>
+              </c.Error>
+              {error.retry && <c.Button onPress={this.search}>Retry</c.Button>}
             </c.CenterView>
           )}
 

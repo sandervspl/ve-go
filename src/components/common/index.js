@@ -76,9 +76,9 @@ export const SmallTitle = styled(HugeTitle)`
   font-size: 16px;
 `;
 
-export const ErrorText = styled.Text`
-  margin-top: 10px;
-  color: red;
+export const Error = styled.View`
+  align-items: center;
+  margin-bottom: 10px;
 `;
 
 export const List = styled.View`
