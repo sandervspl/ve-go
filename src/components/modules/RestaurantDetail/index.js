@@ -71,7 +71,11 @@ class RestaurantDetail extends React.Component {
   getRestaurantData = async () => {
     if (!this.props.app.online) {
       this.setState({
-        error: '☹️ Cannot get restaurant data while offline.',
+        error: {
+          type: 'data',
+          emoji: '☹️',
+          text: 'Cannot get restaurant data while offline.',
+        },
       });
 
       return;
@@ -120,7 +124,11 @@ class RestaurantDetail extends React.Component {
           this.setState({
             loading: false,
             photoLoading: false,
-            error: 'Error while retrieving photo.',
+            error: {
+              type: 'photo',
+              emoji: '📷',
+              text: 'Error while retrieving photo.',
+            },
           });
         }
       }
@@ -129,7 +137,11 @@ class RestaurantDetail extends React.Component {
 
       this.setState({
         loading: false,
-        error: 'Error while retrieving restaurant data.',
+        error: {
+          type: 'data',
+          emoji: '☹️',
+          text: 'Error while retrieving restaurant data.',
+        },
       });
     }
   };
@@ -153,16 +165,24 @@ class RestaurantDetail extends React.Component {
             stop={!this.props.isFocused}
           />
 
-          {error && (
+          {error && error.type === 'data' && (
             <c.CenterView>
-              <Text>{error}</Text>
+              <c.Emoji>{error.emoji}</c.Emoji>
+              <Text>{error.text}</Text>
             </c.CenterView>
           )}
 
           <mc.BigImageHeaderContainer>
             <mc.BigImageGradient colors={['rgba(255,255,255,1)', 'rgba(255,255,255,0)']} />
             <mc.InnerImageContainer>
-              {!photoLoading && !loading ? (
+              {error && error.type === 'photo' && (
+                <c.CenterView>
+                  <c.Emoji>{error.emoji}</c.Emoji>
+                  <Text>{error.text}</Text>
+                </c.CenterView>
+              )}
+
+              {error == null && !photoLoading && !loading ? (
                 <mc.BigImage source={photoSrc} style={{ width: '100%', height: '100%' }} />
               ) : (
                 <c.CenterView>

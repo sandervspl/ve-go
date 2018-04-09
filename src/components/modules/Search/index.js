@@ -1,6 +1,7 @@
 import React from 'react';
-import { ActivityIndicator } from 'react-native';
+import { ActivityIndicator, Text } from 'react-native';
 import { withNavigationFocus } from 'react-navigation-is-focused-hoc';
+import { connect } from 'react-redux';
 import _ from 'lodash';
 import qs from 'qs';
 import * as c from '../../common';
@@ -17,6 +18,7 @@ class Search extends React.Component {
     address: null,
     results: null,
     value: '',
+    error: null,
   };
 
   toDetailPage = (data) => {
@@ -29,6 +31,18 @@ class Search extends React.Component {
   };
 
   search = _.debounce(async () => {
+    if (!this.props.app.online) {
+      this.setState({
+        results: null,
+        error: {
+          emoji: '☹️',
+          text: 'Cannot search while offline.',
+        },
+      });
+
+      return;
+    }
+
     const { value } = this.state;
 
     if (!value) {
@@ -40,6 +54,7 @@ class Search extends React.Component {
       this.setState({
         results: null,
         address: null,
+        error: null,
         loading: true,
       });
 
@@ -49,13 +64,24 @@ class Search extends React.Component {
       const result = await response.json();
 
       let data = result.results[0];
-      const { formatted_address } = data;
-      const { location } = data.geometry;
+
+      if (data == null) {
+        this.setState({
+          loading: false,
+          error: {
+            emoji: '🤷🏻‍♂',
+            text: '️Unable to find that address.',
+          },
+        });
+
+        return;
+      }
 
       // show the user where the search is happening as soon as possible
-      this.setState({ address: formatted_address });
+      this.setState({ address: data.formatted_address });
 
       // fetch all vegan venues for this location
+      const { location } = data.geometry;
       const queries = qs.stringify({
         lat: location.lat,
         lon: location.lng,
@@ -73,7 +99,13 @@ class Search extends React.Component {
         });
       }
     } catch (e) {
-      this.setState({ loading: false });
+      this.setState({
+        loading: false,
+        error: {
+          emoji: '☹️',
+          text: 'Error while loading results.',
+        },
+      });
       console.log(e);
     }
   }, 500);
@@ -83,7 +115,7 @@ class Search extends React.Component {
   };
 
   render() {
-    const { results, loading, value, address } = this.state;
+    const { results, loading, value, address, error } = this.state;
 
     return (
       <c.MainView>
@@ -102,6 +134,13 @@ class Search extends React.Component {
 
             {address != null && <c.SmallTitle>Results for {address}</c.SmallTitle>}
           </c.PaddedView>
+
+          {error && (
+            <c.CenterView>
+              <c.Emoji big>{error.emoji}</c.Emoji>
+              <Text>{error.text}</Text>
+            </c.CenterView>
+          )}
 
           {loading ? (
             <c.CenterView>
@@ -124,4 +163,8 @@ class Search extends React.Component {
   }
 }
 
-export default withNavigationFocus(Search);
+const mapStateToProps = state => ({
+  app: state.app,
+});
+
+export default connect(mapStateToProps)(withNavigationFocus(Search));

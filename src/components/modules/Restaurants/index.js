@@ -59,22 +59,28 @@ class Restaurants extends React.Component {
 
   watchPositionSuccess = async ({ coords }) => {
     try {
-      this.setState({ lat: coords.latitude, lon: coords.longitude });
+      this.setState({
+        lat: coords.latitude,
+        lon: coords.longitude,
+        loading: true,
+      });
 
       const queries = qs.stringify({
         lat: coords.latitude,
         lon: coords.longitude,
       });
-
       const response = await fetch(`${apiConfig.url}/vegan?${queries}`);
       const data = await response.json();
 
       if (data.error) {
-        console.error(data);
+        console.log(data);
 
         this.setState({
           loading: false,
-          error: data.error,
+          error: {
+            emoji: '☹️',
+            text: 'Something went wrong getting nearby restaurants.',
+          },
         });
       } else {
         this.setState({
@@ -87,7 +93,10 @@ class Restaurants extends React.Component {
 
       this.setState({
         loading: false,
-        error: 'Something went wrong getting nearby restaurants.',
+        error: {
+          emoji: '☹️',
+          text: 'Something went wrong getting nearby restaurants.',
+        },
       });
     }
   };
@@ -136,7 +145,8 @@ class Restaurants extends React.Component {
 
           {error && (
             <c.CenterView>
-              <Text>{error}</Text>
+              <c.Emoji>{error.emoji}</c.Emoji>
+              <Text>{error.text}</Text>
             </c.CenterView>
           )}
         </c.ScrollContainer>

@@ -118,3 +118,7 @@ export const TextInput = styled.TextInput`
   background-color: ${styles.color.lightestGray};
   border-radius: 10px;
 `;
+
+export const Emoji = styled.Text`
+  font-size: 60px;
+`;
