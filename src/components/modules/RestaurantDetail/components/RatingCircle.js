@@ -77,15 +77,15 @@ export class RatingCircle extends React.Component {
     const { periods, weekday_text } = data.opening_hours;
     const d = new Date();
     const curHours = d.getHours();
-    let curDay = d.getDay();
-    let period = periods.find(p => p.open.day === curDay);
+    let curDayNum = d.getDay();
+    let period = periods.find(p => p.open.day === curDayNum);
     let openTime;
 
     // if current day has no information, get first opening time
     if (period == null) {
       // get next period with open state
       let dayNumIndex = -1;
-      let nextDayNum = curDay;
+      let nextDayNum = curDayNum;
       while (dayNumIndex === -1) {
         // next day or wrap around if we exceed the amount of weekdays
         nextDayNum = (nextDayNum + 1) % weekday_text.length;
@@ -98,7 +98,10 @@ export class RatingCircle extends React.Component {
       // get opening time for this day
       openTime = periods[dayNumIndex].open.time;
 
-      return `Opens on ${weekdayStr} at ${openTime.substr(0, 2)}:${openTime.substr(2, openTime.length)}`;
+      // decide if we use {day} or tomorrow
+      const nextStr = nextDayNum - curDayNum === 1 ? 'tomorrow' : `on ${weekdayStr}`;
+
+      return `Opens ${nextStr} at ${openTime.substr(0, 2)}:${openTime.substr(2, openTime.length)}`;
     }
 
 
@@ -116,8 +119,8 @@ export class RatingCircle extends React.Component {
     }
 
     // venue is closed. Get times for next day (or wrap around to first index)
-    curDay += 1;
-    period = periods.find(p => p.open.day === curDay);
+    curDayNum += 1;
+    period = periods.find(p => p.open.day === curDayNum);
 
     // get first available period if a next day period is not available
     if (period == null) {
