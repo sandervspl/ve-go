@@ -1,8 +1,9 @@
 import React from 'react';
 import PT from 'prop-types';
-import { ActivityIndicator, Linking, NetInfo, Text } from 'react-native';
+import { ActivityIndicator, Linking, Text } from 'react-native';
 import call from 'react-native-phone-call';
 import { withNavigationFocus } from 'react-navigation-is-focused-hoc';
+import { connect } from 'react-redux';
 import * as c from '../../common';
 import * as mc from './components';
 import { apiConfig, asyncStorage } from '../../../helpers';
@@ -27,42 +28,19 @@ class RestaurantDetail extends React.Component {
   };
 
   componentDidMount() {
-    // NetInfo.isConnected.addEventListener(
-    //   'connectionChange',
-    //   this.onConnectionChange,
-    // );
-
     this.getRestaurantData();
   }
 
-  // componentWillUnmount() {
-  //   NetInfo.isConnected.removeEventListener(
-  //     'connectionChange',
-  //     this.onConnectionChange,
-  //   );
-  // }
-  //
-  // onConnectionChange = (connected) => {
-  //   const { loading, data } = this.state;
-  //
-  //   if (!loading && data == null && connected) {
-  //     this.getRestaurantData();
-  //   }
-  // };
-
   onMapsClick = () => {
-    Linking.openURL(this.state.data.url)
-      .catch(e => console.log(e));
+    Linking.openURL(this.state.data.url).catch(e => console.log(e));
   };
 
   onWebsiteClick = () => {
-    Linking.openURL(this.state.data.website)
-      .catch(e => console.log(e));
+    Linking.openURL(this.state.data.website).catch(e => console.log(e));
   };
 
   onPhoneClick = () => {
-    call({ number: this.state.data.formatted_phone_number, prompt: true })
-      .catch(e => console.log(e));
+    call({ number: this.state.data.formatted_phone_number, prompt: true }).catch(e => console.log(e));
   };
 
   onFavoriteClick = async () => {
@@ -91,6 +69,14 @@ class RestaurantDetail extends React.Component {
   };
 
   getRestaurantData = async () => {
+    if (!this.props.app.online) {
+      this.setState({
+        error: '☹️ Cannot get restaurant data while offline.',
+      });
+
+      return;
+    }
+
     try {
       const { preFetchData } = this.props.navigation.state.params;
 
@@ -134,7 +120,7 @@ class RestaurantDetail extends React.Component {
           this.setState({
             loading: false,
             photoLoading: false,
-            error: 'Unable to get photo.',
+            error: 'Error while retrieving photo.',
           });
         }
       }
@@ -143,7 +129,7 @@ class RestaurantDetail extends React.Component {
 
       this.setState({
         loading: false,
-        error: 'Unable to get restaurant data.',
+        error: 'Error while retrieving restaurant data.',
       });
     }
   };
@@ -177,10 +163,7 @@ class RestaurantDetail extends React.Component {
             <mc.BigImageGradient colors={['rgba(255,255,255,1)', 'rgba(255,255,255,0)']} />
             <mc.InnerImageContainer>
               {!photoLoading && !loading ? (
-                <mc.BigImage
-                  source={photoSrc}
-                  style={{ width: '100%', height: '100%' }}
-                />
+                <mc.BigImage source={photoSrc} style={{ width: '100%', height: '100%' }} />
               ) : (
                 <c.CenterView>
                   <ActivityIndicator />
@@ -189,17 +172,9 @@ class RestaurantDetail extends React.Component {
             </mc.InnerImageContainer>
           </mc.BigImageHeaderContainer>
 
-          {data != null && (
-            <mc.VenueDetails
-              data={data}
-              location={location}
-              onMapsClick={this.onMapsClick}
-            />
-          )}
+          {data != null && <mc.VenueDetails data={data} location={location} onMapsClick={this.onMapsClick} />}
 
-          {data != null && (
-            <mc.Reviews data={data.reviews} />
-          )}
+          {data != null && <mc.Reviews data={data.reviews} />}
         </c.ScrollContainer>
       </c.MainView>
     );
@@ -217,6 +192,13 @@ RestaurantDetail.propTypes = {
       }),
     }),
   }),
+  app: PT.shape({
+    online: PT.bool,
+  }),
 };
 
-export default withNavigationFocus(RestaurantDetail);
+const mapStateToProps = state => ({
+  app: state.app,
+});
+
+export default connect(mapStateToProps)(withNavigationFocus(RestaurantDetail));
