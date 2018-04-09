@@ -93,7 +93,7 @@ export class RatingCircle extends React.Component {
     let openTime;
 
     // if current day has no information, or the venue is closed, get first opening time
-    if (period == null || curHours > period.close.time.substr(0, 2)) {
+    if (period == null || curHours >= period.close.time.substr(0, 2)) {
       // get next period with open state
       let dayNumIndex = -1;
       let nextDayNum = curDayNum;
