@@ -1,6 +1,6 @@
 // dependencies
 import React from 'react';
-import { ActivityIndicator } from 'react-native';
+import { ActivityIndicator, Text, NetInfo } from 'react-native';
 import { withNavigationFocus } from 'react-navigation-is-focused-hoc';
 import qs from 'qs';
 import * as c from '../../common';
@@ -88,7 +88,7 @@ class Restaurants extends React.Component {
 
       this.setState({
         loading: false,
-        error: 'Unable to get restaurants.',
+        error: 'Something went wrong getting nearby restaurants.',
       });
     }
   };
@@ -113,7 +113,7 @@ class Restaurants extends React.Component {
     return (
       <c.MainView>
         <c.ScrollContainer
-          fullHeight={loading}
+          fullHeight={loading || restaurantData == null || restaurantData.length === 0}
           onScroll={(event) => { this.handleScroll(event); }}
           scrollEventThrottle={8}
         >
@@ -135,7 +135,11 @@ class Restaurants extends React.Component {
             />
           )}
 
-          {error && <c.ErrorText>Error: {error}</c.ErrorText>}
+          {error && (
+            <c.CenterView>
+              <Text>{error}</Text>
+            </c.CenterView>
+          )}
         </c.ScrollContainer>
       </c.MainView>
     );
