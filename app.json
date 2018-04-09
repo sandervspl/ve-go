@@ -1,15 +1,27 @@
 {
   "expo": {
-    "name": "Vegan Go",
-    "icon": "./icon.png",
-    "version": "0.2.0",
+    "name": "vegan-go",
+    "description": "",
     "slug": "vegan-go",
-    "sdkVersion": "25.0.0",
-    "ios": {
-      "bundleIdentifier": "com.sandervispoel.vegango"
+    "privacy": "public",
+    "sdkVersion": "26.0.0",
+    "platforms": ["ios", "android"],
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
     },
-    "android": {
-      "package": "com.sandervispoel.vegango"
+    "updates": {
+      "fallbackToCacheTimeout": 0
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": true
     }
   }
 }
