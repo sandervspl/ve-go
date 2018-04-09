@@ -79,6 +79,8 @@ export const SmallTitle = styled(HugeTitle)`
 export const Error = styled.View`
   align-items: center;
   margin-bottom: 10px;
+  padding: 0 20px;
+  width: 100%;
 `;
 
 export const List = styled.View`

@@ -1,5 +1,6 @@
 import React from 'react';
 import { ActivityIndicator, Text, AppState } from 'react-native';
+import { Permissions, Location } from 'expo';
 import { withNavigationFocus } from 'react-navigation-is-focused-hoc';
 import { connect } from 'react-redux';
 // import BackgroundGeolocation from 'react-native-background-geolocation';
@@ -33,9 +34,50 @@ class Restaurants extends React.Component {
     appState: AppState.currentState,
   };
 
-  componentDidMount() {
+  async componentDidMount() {
     AppState.addEventListener('change', this.handleAppStateChange);
 
+    const curPermission = await Permissions.getAsync(Permissions.LOCATION);
+
+    if (curPermission.status !== 'granted') {
+      const { status } = await Permissions.askAsync(Permissions.LOCATION);
+
+      if (status === 'granted') {
+        this.initLocationWatch();
+      } else {
+        this.setState({
+          loading: false,
+          error: {
+            emoji: '📍',
+            text: 'Enable location services in your privacy settings to use Vegan Go.',
+          },
+        });
+      }
+    } else {
+      this.initLocationWatch();
+    }
+  }
+
+  async componentWillReceiveProps(nextProps) {
+    const { restaurantData, loading } = this.state;
+
+    // screen exit
+    if (this.props.isFocused && !nextProps.isFocused) {
+      navigator.geolocation.clearWatch(this.watchId);
+    }
+
+    if (!loading && restaurantData.length === 0 && !this.props.app.online && nextProps.app.online) {
+      this.getNearbyRestaurants();
+    }
+  }
+
+  componentWillUnmount() {
+    AppState.removeEventListener('change', this.handleAppStateChange);
+    navigator.geolocation.clearWatch(this.watchId);
+    // BackgroundGeolocation.removeListeners();
+  }
+
+  initLocationWatch = () => {
     this.watchId = navigator.geolocation.watchPosition(
       this.watchPositionSuccess,
       this.watchPositionError,
@@ -47,10 +89,10 @@ class Restaurants extends React.Component {
 
     // This handler fires whenever bgGeo receives a location update
     // BackgroundGeolocation.on('location', this.watchPositionSuccess, this.watchPositionError);
-
+    //
     // This event fires when a change in motion activity is detected
     // BackgroundGeolocation.on('activitychange', this.handleActivityChange);
-
+    //
     // BackgroundGeolocation.ready({
     //   // Geolocation Config
     //   desiredAccuracy: 0,
@@ -75,26 +117,7 @@ class Restaurants extends React.Component {
     //     });
     //   }
     // });
-  }
-
-  async componentWillReceiveProps(nextProps) {
-    const { restaurantData, loading } = this.state;
-
-    // screen exit
-    if (this.props.isFocused && !nextProps.isFocused) {
-      navigator.geolocation.clearWatch(this.watchId);
-    }
-
-    if (!loading && restaurantData.length === 0 && !this.props.app.online && nextProps.app.online) {
-      this.getNearbyRestaurants();
-    }
-  }
-
-  componentWillUnmount() {
-    AppState.removeEventListener('change', this.handleAppStateChange);
-    navigator.geolocation.clearWatch(this.watchId);
-    // BackgroundGeolocation.removeListeners();
-  }
+  };
 
   handleAppStateChange = (nextAppState) => {
     this.setState({ appState: nextAppState });
@@ -118,6 +141,34 @@ class Restaurants extends React.Component {
       return;
     }
 
+    // check if app has location permissions
+    const { status } = await Permissions.getAsync(Permissions.LOCATION);
+
+    // notify user that location permissions are not granted
+    if (status !== 'granted') {
+      this.setState({
+        loading: false,
+        error: {
+          emoji: '📍',
+          text: 'Enable location services in your privacy settings to use Vegan Go.',
+        },
+      });
+      return;
+    }
+
+    // if no location data is set, we will request it first.
+    if (!this.state.lat || !this.state.lon) {
+      const { coords } = await Location.getCurrentPositionAsync({ enableHighAccuracy: true });
+      this.setState({ lat: coords.latitude, lon: coords.longitude }, this.fetchNearbyRestaurants);
+
+      return;
+    }
+
+    this.fetchNearbyRestaurants();
+  }, 10000);
+
+  // get venues with current location data
+  fetchNearbyRestaurants = async () => {
     try {
       this.setState({ loading: true, error: null });
 
@@ -153,7 +204,7 @@ class Restaurants extends React.Component {
         },
       });
     }
-  }, 10000);
+  }
 
   handleScroll = (event) => {
     if (event.nativeEvent.contentOffset.y >= 60) {
@@ -217,7 +268,7 @@ class Restaurants extends React.Component {
             <c.CenterView>
               <c.Error>
                 <c.Emoji>{error.emoji}</c.Emoji>
-                <Text>{error.text}</Text>
+                <Text style={{ textAlign: 'center' }}>{error.text}</Text>
               </c.Error>
               <c.Button onPress={this.getNearbyRestaurants}>Retry</c.Button>
             </c.CenterView>
