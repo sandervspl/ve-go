@@ -26,7 +26,7 @@
     "qs": "^6.5.1",
     "react": "16.2.0",
     "react-native": "https://github.com/expo/react-native/archive/sdk-26.0.0.tar.gz",
-    "react-native-background-geolocation": "^2.12.0-beta.3",
+    "react-native-background-geolocation": "^2.11.0",
     "react-native-phone-call": "^1.0.4",
     "react-navigation": "^1.5.9",
     "react-navigation-is-focused-hoc": "^1.1.1",

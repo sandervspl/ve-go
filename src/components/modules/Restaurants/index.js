@@ -1,8 +1,10 @@
 import React from 'react';
-import { ActivityIndicator, Text } from 'react-native';
+import { ActivityIndicator, Text, AppState } from 'react-native';
 import { withNavigationFocus } from 'react-navigation-is-focused-hoc';
 import { connect } from 'react-redux';
+// import BackgroundGeolocation from 'react-native-background-geolocation';
 import qs from 'qs';
+import _ from 'lodash';
 import * as c from '../../common';
 import * as mc from './components';
 import { apiConfig } from '../../../helpers';
@@ -19,15 +21,21 @@ class Restaurants extends React.Component {
     };
   };
 
+  // eslint-disable-next-line
+  locatingReady = false;
+
   state = {
     error: null,
     loading: true,
     restaurantData: [],
     lat: null,
     lon: null,
+    appState: AppState.currentState,
   };
 
   componentDidMount() {
+    AppState.addEventListener('change', this.handleAppStateChange);
+
     this.watchId = navigator.geolocation.watchPosition(
       this.watchPositionSuccess,
       this.watchPositionError,
@@ -36,6 +44,37 @@ class Restaurants extends React.Component {
         enableHighAccuracy: true,
       },
     );
+
+    // This handler fires whenever bgGeo receives a location update
+    // BackgroundGeolocation.on('location', this.watchPositionSuccess, this.watchPositionError);
+
+    // This event fires when a change in motion activity is detected
+    // BackgroundGeolocation.on('activitychange', this.handleActivityChange);
+
+    // BackgroundGeolocation.ready({
+    //   // Geolocation Config
+    //   desiredAccuracy: 0,
+    //   distanceFilter: 10,
+    //   // Activity Recognition
+    //   stopTimeout: 1,
+    //   // Application config
+    //   debug: true, // <-- enable this hear sounds for background-geolocation life-cycle.
+    //   logLevel: BackgroundGeolocation.LOG_LEVEL_VERBOSE,
+    //   stopOnTerminate: false, // Allow the background-service to continue tracking when user closes the app.
+    //   startOnBoot: false, // Auto start tracking when device is powered-up.
+    // }, (state) => {
+    //   console.log('[BG] BackgroundGeolocation is configured and ready:', state.enabled);
+    //
+    //   if (!state.enabled) {
+    //     // Start tracking
+    //     BackgroundGeolocation.start(() => {
+    //       console.log('[BG] Start success');
+    //
+    //       this.locatingReady = true;
+    //       this.getNearbyRestaurants();
+    //     });
+    //   }
+    // });
   }
 
   async componentWillReceiveProps(nextProps) {
@@ -52,10 +91,33 @@ class Restaurants extends React.Component {
   }
 
   componentWillUnmount() {
+    AppState.removeEventListener('change', this.handleAppStateChange);
     navigator.geolocation.clearWatch(this.watchId);
+    // BackgroundGeolocation.removeListeners();
   }
 
-  getNearbyRestaurants = async () => {
+  handleAppStateChange = (nextAppState) => {
+    this.setState({ appState: nextAppState });
+  };
+
+  // handleActivityChange = (activity) => {
+  //   // stop locating when moving fast
+  //   if (activity === 'in_vehicle') {
+  //     BackgroundGeolocation.removeListener('location');
+  //   }
+  //
+  //   // start locating when moving slowly
+  //   if (activity === 'on_foot') {
+  //     BackgroundGeolocation.on('location', this.watchPositionSuccess);
+  //   }
+  // };
+
+  getNearbyRestaurants = _.throttle(async () => {
+    // do not execute API calls when locating is not ready or app is not active
+    if (this.state.appState.match(/inactive|background/)/* || !this.locatingReady*/) {
+      return;
+    }
+
     try {
       this.setState({ loading: true, error: null });
 
@@ -91,7 +153,7 @@ class Restaurants extends React.Component {
         },
       });
     }
-  };
+  }, 10000);
 
   handleScroll = (event) => {
     if (event.nativeEvent.contentOffset.y >= 60) {
