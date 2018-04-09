@@ -108,6 +108,8 @@ class Search extends React.Component {
         });
       }
     } catch (e) {
+      console.log(e);
+
       this.setState({
         loading: false,
         error: {
@@ -115,7 +117,6 @@ class Search extends React.Component {
           text: 'Error while loading results.',
         },
       });
-      console.log(e);
     }
   }, 500);
 

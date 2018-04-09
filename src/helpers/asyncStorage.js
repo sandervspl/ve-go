@@ -16,7 +16,7 @@ class AsyncStorageHelper {
 
       return false;
     } catch (e) {
-      console.error(e);
+      console.log(e);
 
       return false;
     }
@@ -28,7 +28,7 @@ class AsyncStorageHelper {
 
       return true;
     } catch (e) {
-      console.error(e);
+      console.log(e);
 
       return false;
     }
@@ -49,7 +49,7 @@ class AsyncStorageHelper {
 
       return true;
     } catch (e) {
-      console.error(e);
+      console.log(e);
 
       return false;
     }
@@ -68,30 +68,42 @@ class AsyncStorageHelper {
 
       return false;
     } catch (e) {
-      console.error(e);
+      console.log(e);
 
       return false;
     }
   };
 
   getFavorites = async () => {
-    const favorites = await this.getItem(this.keys.favorites);
+    try {
+      const favorites = await this.getItem(this.keys.favorites);
 
-    if (!favorites) {
+      if (!favorites) {
+        return false;
+      }
+
+      return favorites.sort((a, b) => a.name > b.name);
+    } catch (e) {
+      console.log(e);
+
       return false;
     }
-
-    return favorites.sort((a, b) => a.name > b.name);
   };
 
   isFavorited = async (placeId) => {
-    const favorites = await this.getFavorites();
+    try {
+      const favorites = await this.getFavorites();
 
-    if (!favorites || (Array.isArray(favorites) && favorites.length === 0)) {
+      if (!favorites || (Array.isArray(favorites) && favorites.length === 0)) {
+        return false;
+      }
+
+      return !!favorites.find(fav => fav.place_id === placeId);
+    } catch (e) {
+      console.log(e);
+
       return false;
     }
-
-    return !!favorites.find(fav => fav.place_id === placeId);
   };
 }
 
