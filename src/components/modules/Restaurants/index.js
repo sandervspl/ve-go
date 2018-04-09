@@ -1,6 +1,5 @@
-// dependencies
 import React from 'react';
-import { ActivityIndicator, Text, NetInfo } from 'react-native';
+import { ActivityIndicator, Text } from 'react-native';
 import { withNavigationFocus } from 'react-navigation-is-focused-hoc';
 import qs from 'qs';
 import * as c from '../../common';
