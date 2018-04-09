@@ -87,7 +87,7 @@ class AsyncStorageHelper {
   isFavorited = async (placeId) => {
     const favorites = await this.getFavorites();
 
-    if (favorites == null) {
+    if (!favorites || (Array.isArray(favorites) && favorites.length === 0)) {
       return false;
     }
 
