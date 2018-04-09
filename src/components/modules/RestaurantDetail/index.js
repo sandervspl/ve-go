@@ -31,11 +31,11 @@ class RestaurantDetail extends React.Component {
     this.getRestaurantData();
   }
 
-  componentWillReceiveProps(nextProps) {
+  componentDidUpdate(prevProps) {
     const { loading, data } = this.state;
 
-    if (!loading && data == null && !this.props.app.online && nextProps.app.online) {
-      this.getRestaurantData(nextProps);
+    if (!loading && data == null && !prevProps.app.online && this.props.app.online) {
+      this.getRestaurantData();
     }
   }
 
@@ -76,8 +76,8 @@ class RestaurantDetail extends React.Component {
     }
   };
 
-  getRestaurantData = async (props = this.props) => {
-    if (!props.app.online) {
+  getRestaurantData = async () => {
+    if (!this.props.app.online) {
       this.setState({
         loading: false,
         error: {

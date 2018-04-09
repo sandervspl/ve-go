@@ -21,11 +21,11 @@ class Search extends React.Component {
     error: null,
   };
 
-  componentWillReceiveProps(nextProps) {
+  componentDidUpdate(prevProps) {
     const { loading, results } = this.state;
 
-    if (!loading && results == null && !this.props.app.online && nextProps.app.online) {
-      this.search(nextProps);
+    if (!loading && results == null && !prevProps.app.online && this.props.app.online) {
+      this.search();
     }
   }
 
@@ -38,8 +38,8 @@ class Search extends React.Component {
     });
   };
 
-  search = _.debounce(async (props = this.props) => {
-    if (!props.app.online) {
+  search = _.debounce(async () => {
+    if (!this.props.app.online) {
       this.setState({
         results: null,
         error: {
