@@ -79,7 +79,9 @@ class Favorites extends React.Component {
 
           {!loading && noFavorites && (
             <c.CenterView>
-              <Text>No favorites yet.</Text>
+              <Text>
+                No favorites yet. Go 💚 a place!
+              </Text>
             </c.CenterView>
           )}
         </c.ScrollContainer>
