@@ -99,6 +99,12 @@ export class RatingCircle extends React.Component {
       for (const period of dayPeriods) {
         openTime = moment(period.open.time, 'HHmm');
         closeTime = moment(period.close.time, 'HHmm');
+
+        // check if venue closes on a day other than the same day
+        if (period.open.day !== period.close.day) {
+          closeTime.add(period.close.day - period.open.day, 'day');
+        }
+
         curTimeIsAfterCloseTime = now.isSameOrAfter(closeTime);
 
         if (!curTimeIsAfterCloseTime) {
