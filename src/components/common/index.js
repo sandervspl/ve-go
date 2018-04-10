@@ -10,7 +10,7 @@ export { RestaurantListItem } from './RestaurantListItem';
 
 export const MainView = styled.View`
   min-height: 100%;
-  background-color: ${styles.color.white};
+  background-color: ${props => props.theme.color.white};
   ${props => props.height && `height: ${props.height}`};
 `;
 
@@ -19,7 +19,7 @@ export const FlexView = styled.View`
   ${props => props.padding && `${props.padding}px`};
   width: 100%;
   height: 100%;
-  background-color: #FFFFFF;
+  background-color: ${props => props.theme.color.white};
 `;
 
 export const PaddedView = styled.View`
@@ -28,19 +28,19 @@ export const PaddedView = styled.View`
 `;
 
 export const ScrollContainer = styled.ScrollView.attrs({
-  contentContainerStyle: props => ({
+  contentContainerStyle: ({ theme, fullHeight }) => ({
     alignItems: 'flex-start',
     justifyContent: 'flex-start',
     position: 'relative',
     paddingBottom: 75,
-    height: props.fullHeight ? '100%' : 'auto',
-    backgroundColor: '#FFFFFF',
+    height: fullHeight ? '100%' : 'auto',
+    backgroundColor: theme.color.white,
   }),
 })``; // not a typo!
 
 export const ContainerWithBorder = styled.View`
-  padding-bottom: ${props => props.paddingBottom ? props.paddingBottom : 0};
-  border-bottom-color: ${styles.color.lightgray};
+  ${props => props.paddingBottom};
+  border-bottom-color: ${props => props.theme.color.lightgray};
   border-bottom-width: 1px;
 `;
 
@@ -117,7 +117,7 @@ export const TextInput = styled.TextInput`
   padding: 0 10px;
   width: 100%;
   height: 40px;
-  background-color: ${styles.color.lightestGray};
+  background-color: ${props => props.theme.color.lightestGray};
   border-radius: 10px;
 `;
 

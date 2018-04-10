@@ -2,7 +2,7 @@ import React from 'react';
 import PT from 'prop-types';
 import { TouchableWithoutFeedback } from 'react-native';
 import * as c from './index';
-import * as s from './styles';
+import theme from '../../style/theme';
 import { getDistanceFromLatLonInM } from '../../helpers';
 
 export class RestaurantListItem extends React.Component {
@@ -53,7 +53,7 @@ export class RestaurantListItem extends React.Component {
               <c.ListItemText
                 light={!pressed}
                 pressed={pressed}
-                style={{ color: isOpen ? s.color.green : s.color.red }}
+                style={{ color: isOpen ? theme.color.green : theme.color.red }}
               >
                 {isOpen ? 'Open' : 'Closed'}
               </c.ListItemText>
@@ -71,11 +71,9 @@ RestaurantListItem.propTypes = {
     location: PT.shape({
       formattedAddress: PT.array,
     }),
-    categories: PT.arrayOf(
-      PT.shape({
-        shortName: PT.string,
-      }),
-    ),
+    categories: PT.arrayOf(PT.shape({
+      shortName: PT.string,
+    })),
   }).isRequired,
   onPress: PT.func.isRequired,
   location: PT.shape({

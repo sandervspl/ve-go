@@ -1,7 +1,7 @@
 import React from 'react';
 import { StackNavigator, TabNavigator, TabBarBottom } from 'react-navigation';
 import { Ionicons } from '@expo/vector-icons';
-import * as s from './components/common/styles';
+import theme from './style/theme';
 import * as m from './components/modules';
 
 const headerStyle = {
@@ -75,7 +75,7 @@ export default TabNavigator(
     tabBarComponent: TabBarBottom,
     tabBarPosition: 'bottom',
     tabBarOptions: {
-      activeTintColor: s.color.green,
+      activeTintColor: theme.color.green,
       inactiveTintColor: 'gray',
     },
     animationEnabled: false,

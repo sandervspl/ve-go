@@ -2,21 +2,21 @@ import React from 'react';
 import styled from 'styled-components';
 import styledProps from 'styled-props';
 import _ from 'lodash';
-import * as s from './styles';
+import theme from '../../style/theme';
 
 const styles = {
   borderColor: {
-    default: s.color.green,
-    black: s.color.black,
+    default: theme.color.green,
+    black: theme.color.black,
   },
   background: {
     default: 'transparent',
-    invert: s.color.green,
+    invert: theme.color.green,
   },
   color: {
-    default: s.color.green,
-    black: s.color.black,
-    invert: s.color.white,
+    default: theme.color.green,
+    black: theme.color.black,
+    invert: theme.color.white,
   },
 };
 

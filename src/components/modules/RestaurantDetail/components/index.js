@@ -1,7 +1,6 @@
 import styled from 'styled-components';
 import { LinearGradient } from 'expo';
 import * as c from '../../../common';
-import * as s from '../../../common/styles';
 
 export { RatingCircle } from './RatingCircle';
 export { Reviews } from './Reviews';
@@ -72,7 +71,7 @@ export const CircleTextContainer = styled.View`
 `;
 
 export const CircleText = styled.Text`
-  color: ${props => props.small ? s.color.darkGray : s.color.black};
+  color: ${({ theme, small }) => small ? theme.color.darkGray : theme.color.black};
   font-size: ${props => props.small ? 17 : 30}px;
   ${props => props.bold && 'font-weight: bold'};
 `;
@@ -103,11 +102,11 @@ export const ContentContainer = styled.View`
 
 export const VenueInfoContainer = styled.View`
   width: 100%;
-  background-color: ${s.color.almondMilk};
+  background-color: ${props => props.theme.color.almondMilk};
 `;
 
 export const InfoText = styled.Text`
-  color: ${props => props.light ? s.color.darkGray : s.color.black};
+  color: ${props => props.light ? props.theme.color.darkGray : props.theme.color.black};
   font-size: 16px;
 `;
 
@@ -118,7 +117,7 @@ export const ReviewContainer = styled.View`
   padding: 10px;
   margin-bottom: 20px;
   width: 100%;
-  background-color: ${s.color.lightestGray};
+  background-color: ${props => props.theme.color.lightestGray};
 `;
 
 export const ReviewRatingContainer = styled.View`
@@ -143,7 +142,7 @@ export const ReviewTextContainer = styled.View`
 
 export const ReviewDate = styled.Text`
   margin: 2px 0 5px;
-  color: ${s.color.gray};
+  color: ${props => props.theme.color.gray};
 `;
 
 export const ReviewTextInner = styled.View`

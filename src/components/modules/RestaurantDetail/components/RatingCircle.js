@@ -3,7 +3,7 @@ import { ActivityIndicator, View, Text } from 'react-native';
 import { Svg } from 'expo';
 import { Ionicons } from '@expo/vector-icons';
 import moment from 'moment';
-import * as s from '../../../common/styles';
+import theme from '../../../../style/theme';
 import { ratingColor, CountUp } from '../../../../helpers';
 import * as mc from './index';
 
@@ -147,7 +147,7 @@ export class RatingCircle extends React.Component {
     const { rating } = this.state;
 
     if (rating == null) {
-      return s.color.lightgray;
+      return theme.color.lightgray;
     }
 
     return ratingColor(rating);
@@ -177,7 +177,7 @@ export class RatingCircle extends React.Component {
             cy={circle.x}
             r={circle.radius}
             fill="none"
-            stroke={s.color.lightestGray}
+            stroke={theme.color.lightestGray}
             strokeWidth={circle.strokeWidth}
           />
 
@@ -198,7 +198,7 @@ export class RatingCircle extends React.Component {
             cx={circle.y}
             cy={circle.x}
             r={circle.radius * .9}
-            fill={s.color.lightestGray}
+            fill={theme.color.lightestGray}
           />
         </Svg.G>
 
@@ -225,7 +225,7 @@ export class RatingCircle extends React.Component {
               {preData.name}
             </mc.CircleText>
             <mc.CircleText small>
-              <Text style={{ fontWeight: 'bold', color: isOpen ? s.color.green : s.color.red }}>
+              <Text style={{ fontWeight: 'bold', color: isOpen ? theme.color.green : theme.color.red }}>
                 {isOpen ? 'Now open' : isOpen != null ? 'Closed' : 'Opening times unavailable'}
               </Text>
               {openStateText && ` · ${openStateText}`}
