@@ -42,7 +42,7 @@ class Restaurants extends React.Component {
 
       // if granted, start location watching
       if (status === 'granted') {
-        this.initLocationWatch();
+        this.getCurrentPosition();
       } else {
         // is not granted, or has been denied in the past
         // user has to give location permission in settings
@@ -55,26 +55,16 @@ class Restaurants extends React.Component {
         });
       }
     } else {
-      this.initLocationWatch();
+      this.getCurrentPosition();
     }
   }
 
   componentWillReceiveProps(nextProps) {
     const { restaurantData, loading } = this.state;
 
-    // screen exit -- stop locating
-    if (this.props.isFocused && !nextProps.isFocused) {
-      navigator.geolocation.clearWatch(this.watchId);
-    }
-
-    // screen focus -- start locating
-    if (!this.props.isFocused && nextProps.isFocused) {
-      this.initLocationWatch();
-    }
-
     // when no data is present and user is back online, fetch nearby restaurants
     if (!loading && restaurantData.length === 0 && !this.props.app.online && nextProps.app.online) {
-      this.getNearbyRestaurants();
+      this.getCurrentPosition();
     }
   }
 
@@ -89,7 +79,6 @@ class Restaurants extends React.Component {
   // stop all activities
   componentWillUnmount() {
     AppState.removeEventListener('change', this.handleAppStateChange);
-    navigator.geolocation.clearWatch(this.watchId);
   }
 
   // store app state in component state when it changed
@@ -116,8 +105,8 @@ class Restaurants extends React.Component {
 
     // if no location data is set, we will request it first.
     if (!this.state.lat || !this.state.lon) {
-      const { coords } = await Location.getCurrentPositionAsync({ enableHighAccuracy: true });
-      this.setState({ lat: coords.latitude, lon: coords.longitude }, this.fetchNearbyRestaurants);
+      const loc = await Location.getCurrentPositionAsync({ enableHighAccuracy: true });
+      this.watchPositionSuccess(loc);
 
       return;
     }
@@ -125,16 +114,10 @@ class Restaurants extends React.Component {
     this.fetchNearbyRestaurants();
   }, 10000);
 
-  // start geolocation watcher
-  initLocationWatch = () => {
-    this.watchId = navigator.geolocation.watchPosition(
-      this.watchPositionSuccess,
-      this.watchPositionError,
-      {
-        timeout: 1000,
-        enableHighAccuracy: true,
-      },
-    );
+  // start location watcher
+  getCurrentPosition = async () => {
+    const loc = await Location.getCurrentPositionAsync({ enableHighAccuracy: true });
+    this.watchPositionSuccess(loc);
   };
 
   // get nearby venues with current location
@@ -194,12 +177,7 @@ class Restaurants extends React.Component {
     this.getNearbyRestaurants();
   };
 
-  // geolocation error/success callbacks
-  watchPositionError = (err) => {
-    this.setState({ error: err });
-  };
-
-  watchPositionSuccess = async ({ coords }) => {
+  watchPositionSuccess = ({ coords }) => {
     this.setState({
       lat: coords.latitude,
       lon: coords.longitude,
