@@ -1,5 +1,5 @@
 import React from 'react';
-import { ActivityIndicator, Text, AppState } from 'react-native';
+import { ActivityIndicator, Text, AppState, RefreshControl } from 'react-native';
 import { Permissions, Location } from 'expo';
 import { withNavigationFocus } from 'react-navigation-is-focused-hoc';
 import { connect } from 'react-redux';
@@ -129,11 +129,6 @@ class Restaurants extends React.Component {
     );
   };
 
-  // values: active/inactive/background
-  handleAppStateChange = (nextAppState) => {
-    this.setState({ appState: nextAppState });
-  };
-
   // get nearby venues with current location
   fetchNearbyRestaurants = async () => {
     try {
@@ -173,6 +168,11 @@ class Restaurants extends React.Component {
     }
   };
 
+  // values: active/inactive/background
+  handleAppStateChange = (nextAppState) => {
+    this.setState({ appState: nextAppState });
+  };
+
   // show/hide nav bar title after scrolling
   handleScroll = (event) => {
     if (event.nativeEvent.contentOffset.y >= 60) {
@@ -180,6 +180,10 @@ class Restaurants extends React.Component {
     } else {
       this.props.navigation.setParams({ showTitle: false });
     }
+  };
+
+  handleRefresh = () => {
+    this.getNearbyRestaurants();
   };
 
   // geolocation error/success callbacks
@@ -205,6 +209,13 @@ class Restaurants extends React.Component {
     });
   };
 
+  refreshController = () => (
+    <RefreshControl
+      refreshing={this.state.loading}
+      onRefresh={this.handleRefresh}
+    />
+  );
+
   render() {
     const { error, loading, restaurantData, lat, lon } = this.state;
 
@@ -214,18 +225,13 @@ class Restaurants extends React.Component {
           fullHeight={loading || restaurantData == null || restaurantData.length === 0}
           onScroll={(event) => { this.handleScroll(event); }}
           scrollEventThrottle={8}
+          refreshControl={this.refreshController()}
         >
           <c.Header>
             <c.ContainerWithBorder>
               <c.HugeTitle>Restaurants</c.HugeTitle>
             </c.ContainerWithBorder>
           </c.Header>
-
-          {loading && (
-            <c.CenterView noFullHeight>
-              <ActivityIndicator />
-            </c.CenterView>
-          )}
 
           {restaurantData != null && (
             <mc.RestaurantList
