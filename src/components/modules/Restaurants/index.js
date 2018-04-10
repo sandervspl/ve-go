@@ -73,7 +73,7 @@ class Restaurants extends React.Component {
     const { appState } = this.state;
 
     if (prevState.appState !== 'active' && appState === 'active') {
-      this.getNearbyRestaurants();
+      this.getCurrentPosition();
     }
   }
 
@@ -236,7 +236,7 @@ class Restaurants extends React.Component {
                 <c.Emoji>{error.emoji}</c.Emoji>
                 <Text style={{ textAlign: 'center' }}>{error.text}</Text>
               </c.Error>
-              <c.Button onPress={this.getNearbyRestaurants}>Retry</c.Button>
+              <c.Button onPress={this.getCurrentPosition}>Retry</c.Button>
             </c.CenterView>
           )}
         </c.ScrollContainer>
