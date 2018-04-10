@@ -2,6 +2,7 @@ import React from 'react';
 import { ActivityIndicator, View, Text } from 'react-native';
 import { Svg } from 'expo';
 import { Ionicons } from '@expo/vector-icons';
+import moment from 'moment';
 import * as s from '../../../common/styles';
 import { ratingColor, CountUp } from '../../../../helpers';
 import * as mc from './index';
@@ -86,17 +87,32 @@ export class RatingCircle extends React.Component {
 
     // eslint-disable-next-line camelcase
     const { periods, weekday_text } = data.opening_hours;
-    const d = new Date();
-    const curHours = d.getHours();
-    const curDayNum = d.getDay();
-    const period = periods.find(p => p.open.day === curDayNum);
-    let openTime;
+    const now = moment();
+    const dayPeriods = periods.filter(p => p.open.day === now.day());
+    let closeTime = null;
+    let openTime = null;
+    let curTimeIsAfterCloseTime = false;
+
+    // check all periods of a day -- venues can have multiple opening/closing times
+    if (dayPeriods.length > 0) {
+      // eslint-disable-next-line no-restricted-syntax
+      for (const period of dayPeriods) {
+        openTime = moment(period.open.time, 'HHmm');
+        closeTime = moment(period.close.time, 'HHmm');
+        curTimeIsAfterCloseTime = now.isSameOrAfter(closeTime);
+
+        if (!curTimeIsAfterCloseTime) {
+          break;
+        }
+      }
+    }
 
     // if current day has no information, or the venue is closed, get first opening time
-    if (period == null || curHours >= period.close.time.substr(0, 2)) {
+    if (dayPeriods.length === 0 || curTimeIsAfterCloseTime) {
       // get next period with open state
       let dayNumIndex = -1;
-      let nextDayNum = curDayNum;
+      let nextDayNum = now.day();
+
       while (dayNumIndex === -1) {
         // next day or wrap around if we exceed the amount of weekdays
         nextDayNum = (nextDayNum + 1) % weekday_text.length;
@@ -107,33 +123,23 @@ export class RatingCircle extends React.Component {
       const [weekdayStr] = weekday_text[nextDayNum - 1].split(':');
 
       // get opening time for this day
-      openTime = periods[dayNumIndex].open.time;
+      openTime = moment(periods[dayNumIndex].open.time, 'HHmm');
 
       // decide if we use {day} or tomorrow
-      const nextStr = nextDayNum - curDayNum === 1 ? 'tomorrow' : `on ${weekdayStr}`;
+      const nextStr = nextDayNum - now.day() === 1 ? 'tomorrow' : `on ${weekdayStr}`;
 
-      return `Opens ${nextStr} at ${openTime.substr(0, 2)}:${openTime.substr(2, openTime.length)}`;
+      return `Opens ${nextStr} at ${openTime.format('HH:mm')}`;
     }
 
-
-    // get open/cose times for current day
-    const closeTime = period.close.time;
-    openTime = period.open.time;
-
-    // get first two numbers of time (i.e. "09" from "0900") and make it a number
-    const openTimeNum = openTime.substr(0, 2);
-    const closeTimeNum = closeTime.substr(0, 2);
 
     // venue is open -- return time until close
-    if (curHours >= openTimeNum && curHours < closeTimeNum) {
-      return `Open until ${closeTimeNum}:${closeTime.substr(2, closeTime.length)}`;
+    if (now.isBetween(openTime, closeTime, '[)')) {
+      return `Open until ${closeTime.format('HH:mm')}`;
     }
 
 
-    // venue is open today but not yet -- return open time
-    openTime = period.open.time;
-
-    return `Opens at ${openTime.substr(0, 2)}:${openTime.substr(2, openTime.length)}`;
+    // venue is closed -- opens some time today
+    return `Opens at ${openTime.format('HH:mm')}`;
   };
 
   // color the circle stroke according to the venue rating
