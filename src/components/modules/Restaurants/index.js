@@ -1,5 +1,5 @@
 import React from 'react';
-import { ActivityIndicator, Text, AppState, RefreshControl } from 'react-native';
+import { Text, AppState, RefreshControl } from 'react-native';
 import { Permissions, Location } from 'expo';
 import { withNavigationFocus } from 'react-navigation-is-focused-hoc';
 import { connect } from 'react-redux';
@@ -59,7 +59,7 @@ class Restaurants extends React.Component {
     }
   }
 
-  async componentWillReceiveProps(nextProps) {
+  componentWillReceiveProps(nextProps) {
     const { restaurantData, loading } = this.state;
 
     // screen exit -- stop locating
@@ -74,6 +74,14 @@ class Restaurants extends React.Component {
 
     // when no data is present and user is back online, fetch nearby restaurants
     if (!loading && restaurantData.length === 0 && !this.props.app.online && nextProps.app.online) {
+      this.getNearbyRestaurants();
+    }
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    const { appState } = this.state;
+
+    if (prevState.appState !== 'active' && appState === 'active') {
       this.getNearbyRestaurants();
     }
   }
