@@ -8,7 +8,7 @@ export { PopupTopBar } from './PopupTopBar';
 export { Button } from './Button';
 export { RestaurantListItem } from './RestaurantListItem';
 
-export const MainView = styled.View`
+export const MainView = styled.SafeAreaView`
   min-height: 100%;
   background-color: ${props => props.theme.color.white};
   ${props => props.height && `height: ${props.height}`};
