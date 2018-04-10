@@ -3,7 +3,6 @@ import { ActivityIndicator, Text, AppState } from 'react-native';
 import { Permissions, Location } from 'expo';
 import { withNavigationFocus } from 'react-navigation-is-focused-hoc';
 import { connect } from 'react-redux';
-// import BackgroundGeolocation from 'react-native-background-geolocation';
 import qs from 'qs';
 import _ from 'lodash';
 import * as c from '../../common';
@@ -22,9 +21,6 @@ class Restaurants extends React.Component {
     };
   };
 
-  // eslint-disable-next-line
-  locatingReady = false;
-
   state = {
     error: null,
     loading: true,
@@ -37,14 +33,19 @@ class Restaurants extends React.Component {
   async componentDidMount() {
     AppState.addEventListener('change', this.handleAppStateChange);
 
-    const curPermission = await Permissions.getAsync(Permissions.LOCATION);
+    // check if location permissions are granted
+    const locPermission = await Permissions.getAsync(Permissions.LOCATION);
 
-    if (curPermission.status !== 'granted') {
+    // if not granted yet, we ask for permission
+    if (locPermission.status !== 'granted') {
       const { status } = await Permissions.askAsync(Permissions.LOCATION);
 
+      // if granted, start location watching
       if (status === 'granted') {
         this.initLocationWatch();
       } else {
+        // is not granted, or has been denied in the past
+        // user has to give location permission in settings
         this.setState({
           loading: false,
           error: {
@@ -61,83 +62,32 @@ class Restaurants extends React.Component {
   async componentWillReceiveProps(nextProps) {
     const { restaurantData, loading } = this.state;
 
-    // screen exit
+    // screen exit -- stop locating
     if (this.props.isFocused && !nextProps.isFocused) {
       navigator.geolocation.clearWatch(this.watchId);
     }
 
+    // screen focus -- start locating
+    if (!this.props.isFocused && nextProps.isFocused) {
+      this.initLocationWatch();
+    }
+
+    // when no data is present and user is back online, fetch nearby restaurants
     if (!loading && restaurantData.length === 0 && !this.props.app.online && nextProps.app.online) {
       this.getNearbyRestaurants();
     }
   }
 
+  // stop all activities
   componentWillUnmount() {
     AppState.removeEventListener('change', this.handleAppStateChange);
     navigator.geolocation.clearWatch(this.watchId);
-    // BackgroundGeolocation.removeListeners();
   }
 
-  initLocationWatch = () => {
-    this.watchId = navigator.geolocation.watchPosition(
-      this.watchPositionSuccess,
-      this.watchPositionError,
-      {
-        timeout: 1000,
-        enableHighAccuracy: true,
-      },
-    );
-
-    // This handler fires whenever bgGeo receives a location update
-    // BackgroundGeolocation.on('location', this.watchPositionSuccess, this.watchPositionError);
-    //
-    // This event fires when a change in motion activity is detected
-    // BackgroundGeolocation.on('activitychange', this.handleActivityChange);
-    //
-    // BackgroundGeolocation.ready({
-    //   // Geolocation Config
-    //   desiredAccuracy: 0,
-    //   distanceFilter: 10,
-    //   // Activity Recognition
-    //   stopTimeout: 1,
-    //   // Application config
-    //   debug: true, // <-- enable this hear sounds for background-geolocation life-cycle.
-    //   logLevel: BackgroundGeolocation.LOG_LEVEL_VERBOSE,
-    //   stopOnTerminate: false, // Allow the background-service to continue tracking when user closes the app.
-    //   startOnBoot: false, // Auto start tracking when device is powered-up.
-    // }, (state) => {
-    //   console.log('[BG] BackgroundGeolocation is configured and ready:', state.enabled);
-    //
-    //   if (!state.enabled) {
-    //     // Start tracking
-    //     BackgroundGeolocation.start(() => {
-    //       console.log('[BG] Start success');
-    //
-    //       this.locatingReady = true;
-    //       this.getNearbyRestaurants();
-    //     });
-    //   }
-    // });
-  };
-
-  handleAppStateChange = (nextAppState) => {
-    this.setState({ appState: nextAppState });
-  };
-
-  // handleActivityChange = (activity) => {
-  //   // stop locating when moving fast
-  //   if (activity === 'in_vehicle') {
-  //     BackgroundGeolocation.removeListener('location');
-  //   }
-  //
-  //   // start locating when moving slowly
-  //   if (activity === 'on_foot') {
-  //     BackgroundGeolocation.on('location', this.watchPositionSuccess);
-  //   }
-  // };
-
+  // store app state in component state when it changed
   getNearbyRestaurants = _.throttle(async () => {
     // do not execute API calls when locating is not ready or app is not active
-    if (this.state.appState.match(/inactive|background/)/* || !this.locatingReady*/) {
+    if (this.state.appState.match(/inactive|background/)) {
       return;
     }
 
@@ -167,7 +117,24 @@ class Restaurants extends React.Component {
     this.fetchNearbyRestaurants();
   }, 10000);
 
-  // get venues with current location data
+  // start geolocation watcher
+  initLocationWatch = () => {
+    this.watchId = navigator.geolocation.watchPosition(
+      this.watchPositionSuccess,
+      this.watchPositionError,
+      {
+        timeout: 1000,
+        enableHighAccuracy: true,
+      },
+    );
+  };
+
+  // values: active/inactive/background
+  handleAppStateChange = (nextAppState) => {
+    this.setState({ appState: nextAppState });
+  };
+
+  // get nearby venues with current location
   fetchNearbyRestaurants = async () => {
     try {
       this.setState({ loading: true, error: null });
@@ -204,8 +171,9 @@ class Restaurants extends React.Component {
         },
       });
     }
-  }
+  };
 
+  // show/hide nav bar title after scrolling
   handleScroll = (event) => {
     if (event.nativeEvent.contentOffset.y >= 60) {
       this.props.navigation.setParams({ showTitle: true });
@@ -214,10 +182,9 @@ class Restaurants extends React.Component {
     }
   };
 
+  // geolocation error/success callbacks
   watchPositionError = (err) => {
-    this.setState({
-      error: err,
-    });
+    this.setState({ error: err });
   };
 
   watchPositionSuccess = async ({ coords }) => {
@@ -227,6 +194,8 @@ class Restaurants extends React.Component {
     }, this.getNearbyRestaurants);
   };
 
+  // navigate to detail page with data we already have
+  // fetch all data on details page
   toDetailPage = (data) => {
     const { lat, lon } = this.state;
 
@@ -252,11 +221,13 @@ class Restaurants extends React.Component {
             </c.ContainerWithBorder>
           </c.Header>
 
-          {loading ? (
-            <c.CenterView>
+          {loading && (
+            <c.CenterView noFullHeight>
               <ActivityIndicator />
             </c.CenterView>
-          ) : (
+          )}
+
+          {restaurantData != null && (
             <mc.RestaurantList
               data={restaurantData}
               toDetailPage={this.toDetailPage}

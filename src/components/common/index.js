@@ -54,7 +54,7 @@ export const CenterView = styled.View`
   align-items: center;
   justify-content: center;
   width: 100%;
-  height: 100%;
+  height: ${props => props.noFullHeight ? 'auto' : '100%'};
 `;
 
 export const HugeTitle = styled.Text`
