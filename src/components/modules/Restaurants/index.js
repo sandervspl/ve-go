@@ -24,6 +24,7 @@ class Restaurants extends React.Component {
   state = {
     error: null,
     loading: true,
+    refreshing: false,
     restaurantData: [],
     lat: null,
     lon: null,
@@ -100,13 +101,13 @@ class Restaurants extends React.Component {
           text: 'Enable location services in your privacy settings to use Vegan Go.',
         },
       });
+
       return;
     }
 
     // if no location data is set, we will request it first.
     if (!this.state.lat || !this.state.lon) {
-      const loc = await Location.getCurrentPositionAsync({ enableHighAccuracy: true });
-      this.watchPositionSuccess(loc);
+      this.getCurrentPosition();
 
       return;
     }
@@ -117,7 +118,7 @@ class Restaurants extends React.Component {
   // start location watcher
   getCurrentPosition = async () => {
     const loc = await Location.getCurrentPositionAsync({ enableHighAccuracy: true });
-    this.watchPositionSuccess(loc);
+    await this.watchPositionSuccess(loc);
   };
 
   // get nearby venues with current location
@@ -173,15 +174,17 @@ class Restaurants extends React.Component {
     }
   };
 
-  handleRefresh = () => {
-    this.getNearbyRestaurants();
+  handleRefresh = async () => {
+    this.setState({ refreshing: true });
+    await this.getCurrentPosition();
+    this.setState({ refreshing: false });
   };
 
-  watchPositionSuccess = ({ coords }) => {
+  watchPositionSuccess = async ({ coords }) => {
     this.setState({
       lat: coords.latitude,
       lon: coords.longitude,
-    }, this.getNearbyRestaurants);
+    }, await this.getNearbyRestaurants);
   };
 
   // navigate to detail page with data we already have
@@ -197,7 +200,7 @@ class Restaurants extends React.Component {
 
   refreshController = () => (
     <RefreshControl
-      refreshing={this.state.loading}
+      refreshing={this.state.loading || this.state.refreshing}
       onRefresh={this.handleRefresh}
     />
   );
