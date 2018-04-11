@@ -102,7 +102,7 @@ export class RatingCircle extends React.Component {
 
         // check if venue closes on a day other than the same day
         if (period.open.day !== period.close.day) {
-          closeTime.add(period.close.day - period.open.day, 'day');
+          closeTime.add(1, 'day');
         }
 
         curTimeIsAfterCloseTime = now.isSameOrAfter(closeTime);
@@ -164,8 +164,8 @@ export class RatingCircle extends React.Component {
     const { rating, openStateText } = this.state;
     const { preData, data, loading, saved, onWebsiteClick, onPhoneClick, onFavoriteClick } = this.props;
     const isOpen = (
-      (preData.opening_hours && preData.opening_hours.open_now) ||
-      (data && data.opening_hours && data.opening_hours.open_now)
+      (data && data.opening_hours && data.opening_hours.open_now) ||
+      (preData.opening_hours && preData.opening_hours.open_now)
     );
 
     return (
