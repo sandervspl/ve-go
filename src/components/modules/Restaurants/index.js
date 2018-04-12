@@ -8,6 +8,7 @@ import _ from 'lodash';
 import * as c from '../../common';
 import * as mc from './components';
 import { apiConfig } from '../../../helpers';
+import { GOOGLE_MAPS_KEY } from '../../../secret';
 
 class Restaurants extends React.Component {
   static navigationOptions = ({ navigation }) => {
@@ -28,6 +29,10 @@ class Restaurants extends React.Component {
     restaurantData: [],
     lat: null,
     lon: null,
+    address: {
+      name: '',
+      place_id: null,
+    },
     appState: AppState.currentState,
   };
 
@@ -118,7 +123,21 @@ class Restaurants extends React.Component {
   // start location watcher
   getCurrentPosition = async () => {
     const loc = await Location.getCurrentPositionAsync({ enableHighAccuracy: true });
-    await this.watchPositionSuccess(loc);
+
+    // get an address for our position
+    const { latitude: lat, longitude: lon } = loc.coords;
+    const uri = 'https://maps.googleapis.com/maps/api/geocode/json';
+    const response = await fetch(`${uri}?latlng=${lat},${lon}&key=${GOOGLE_MAPS_KEY}`);
+    const result = await response.json();
+    const data = result && result.results && result.results[0];
+
+    if (data && data.place_id !== this.state.address.place_id) {
+      const route = data.address_components.find(a => a.types.includes('route'));
+      const name = route ? route.long_name : data.formatted_address;
+      this.setState({ address: { name, place_id: data.place_id } });
+
+      await this.watchPositionSuccess(loc);
+    }
   };
 
   // get nearby venues with current location
@@ -206,7 +225,7 @@ class Restaurants extends React.Component {
   );
 
   render() {
-    const { error, loading, restaurantData, lat, lon } = this.state;
+    const { error, loading, restaurantData, lat, lon, address } = this.state;
 
     return (
       <c.MainView>
@@ -217,10 +236,14 @@ class Restaurants extends React.Component {
           refreshControl={this.refreshController()}
         >
           <c.Header>
-            <c.ContainerWithBorder>
-              <c.HugeTitle>Restaurants</c.HugeTitle>
-            </c.ContainerWithBorder>
+            <c.HugeTitle>Restaurants</c.HugeTitle>
           </c.Header>
+
+          {address.name && (
+            <c.PaddedView>
+              <c.SmallTitle>Showing results for {address.name}</c.SmallTitle>
+            </c.PaddedView>
+          )}
 
           {restaurantData != null && (
             <mc.RestaurantList
