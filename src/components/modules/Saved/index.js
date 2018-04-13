@@ -4,36 +4,36 @@ import { withNavigationFocus } from 'react-navigation-is-focused-hoc';
 import * as c from '../../common';
 import { asyncStorage } from '../../../helpers';
 
-class Favorites extends React.Component {
+class Saved extends React.Component {
   static navigationOptions = ({ navigation }) => ({
     title: navigation.state.routeName,
   });
 
   state = {
     loading: false,
-    favorites: null,
+    saved: null,
   };
 
   componentDidMount() {
-    this.getFavorites();
+    this.getSaved();
   }
 
   componentWillReceiveProps(nextProps) {
     // screen enter -- refresh data
     if (!this.props.isFocused && nextProps.isFocused) {
-      this.getFavorites();
+      this.getSaved();
     }
   }
 
-  getFavorites = () => {
+  getSaved = () => {
     this.setState({
-      favorites: null,
+      saved: null,
       loading: true,
     }, async () => {
-      const favorites = await asyncStorage.getFavorites();
+      const saved = await asyncStorage.getSaved();
 
       this.setState({
-        favorites,
+        saved,
         loading: false,
       });
     });
@@ -49,15 +49,15 @@ class Favorites extends React.Component {
   };
 
   render() {
-    const { favorites, loading } = this.state;
-    const noFavorites = !favorites || favorites.length === 0;
+    const { saved, loading } = this.state;
+    const noSaved = !saved || saved.length === 0;
 
     return (
       <c.MainView>
-        <c.ScrollContainer fullHeight={noFavorites}>
+        <c.ScrollContainer fullHeight={noSaved}>
           <c.Header>
             <c.ContainerWithBorder>
-              <c.HugeTitle>Favorites</c.HugeTitle>
+              <c.HugeTitle>Saved</c.HugeTitle>
             </c.ContainerWithBorder>
           </c.Header>
 
@@ -67,7 +67,7 @@ class Favorites extends React.Component {
             </c.CenterView>
           ) : (
             <c.List>
-              {!noFavorites && favorites.map(fav => (
+              {!noSaved && saved.map(fav => (
                 <c.RestaurantListItem
                   key={fav.place_id}
                   data={fav}
@@ -77,10 +77,10 @@ class Favorites extends React.Component {
             </c.List>
           )}
 
-          {!loading && noFavorites && (
+          {!loading && noSaved && (
             <c.CenterView>
               <Text>
-                No favorites yet. Go 💚 a place!
+                No saved restaurants yet. Go 💚 a place!
               </Text>
             </c.CenterView>
           )}
@@ -90,6 +90,6 @@ class Favorites extends React.Component {
   }
 }
 
-Favorites.propTypes = {};
+Saved.propTypes = {};
 
-export default withNavigationFocus(Favorites);
+export default withNavigationFocus(Saved);

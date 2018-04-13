@@ -1,7 +1,6 @@
 import React from 'react';
 import PT from 'prop-types';
 import { ActivityIndicator, Linking, Text } from 'react-native';
-import call from 'react-native-phone-call';
 import { withNavigationFocus } from 'react-navigation-is-focused-hoc';
 import { connect } from 'react-redux';
 import * as c from '../../common';
@@ -23,7 +22,7 @@ class RestaurantDetail extends React.Component {
     data: null,
     photoUrl: null,
     photoLoading: false,
-    saved: null,
+    isSaved: null,
     error: null,
   };
 
@@ -40,40 +39,12 @@ class RestaurantDetail extends React.Component {
   }
 
   onMapsClick = () => {
-    Linking.openURL(this.state.data.url).catch(e => console.log(e));
+    Linking.openURL(this.props.data.url)
+      .catch(e => console.log(e));
   };
 
-  onWebsiteClick = () => {
-    Linking.openURL(this.state.data.website).catch(e => console.log(e));
-  };
-
-  onPhoneClick = () => {
-    call({ number: this.state.data.formatted_phone_number, prompt: true }).catch(e => console.log(e));
-  };
-
-  onFavoriteClick = async () => {
-    // eslint-disable-next-line
-    const { place_id, name, vicinity } = this.state.data;
-    const isFavorited = await asyncStorage.isFavorited(place_id);
-
-    if (!isFavorited) {
-      const favoriteDetails = {
-        place_id,
-        name,
-        vicinity,
-      };
-      const saved = await asyncStorage.favorite(favoriteDetails);
-
-      if (saved) {
-        this.setState({ saved });
-      }
-    } else {
-      const saved = await asyncStorage.unfavorite(place_id);
-
-      if (saved) {
-        this.setState({ saved: !saved });
-      }
-    }
+  setSaveState = (isSaved) => {
+    this.setState({ isSaved });
   };
 
   getRestaurantData = async () => {
@@ -101,18 +72,18 @@ class RestaurantDetail extends React.Component {
       // fetch venue information
       const venueResponse = await fetch(`${apiConfig.url}/vegan/restaurant/${preFetchData.place_id}`);
       const venueData = await venueResponse.json();
-      let saved = false;
+      let isSaved = false;
 
-      // check if venue is saved as favorite
-      if (await asyncStorage.isFavorited(venueData.place_id)) {
-        saved = true;
+      // check if venue is is saved as favorite
+      if (await asyncStorage.isSaved(venueData.place_id)) {
+        isSaved = true;
       }
 
       // store venuedata in state
       this.setState({
         loading: false,
         data: venueData,
-        saved,
+        isSaved,
       });
 
       // fetch venue photos with reference
@@ -157,21 +128,19 @@ class RestaurantDetail extends React.Component {
   };
 
   render() {
-    const { loading, photoLoading, data, photoUrl, saved, error } = this.state;
+    const { loading, photoLoading, data, photoUrl, isSaved, error } = this.state;
     const { preFetchData, location } = this.props.navigation.state.params;
     const photoSrc = photoUrl != null ? { uri: photoUrl } : DefaultImage;
 
     return (
       <c.MainView height="100%">
         <c.ScrollContainer fullHeight={loading}>
-          <mc.RatingCircle
+          <mc.RatingCircleContainer
             data={data}
             loading={loading}
             preData={preFetchData}
-            onWebsiteClick={this.onWebsiteClick}
-            onPhoneClick={this.onPhoneClick}
-            onFavoriteClick={this.onFavoriteClick}
-            saved={saved}
+            isSaved={isSaved}
+            setSaveState={this.setSaveState}
             stop={!this.props.isFocused}
           />
 

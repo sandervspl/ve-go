@@ -32,9 +32,9 @@ const SearchStack = StackNavigator(
   },
 );
 
-const FavoritesStack = StackNavigator(
+const SavedStack = StackNavigator(
   {
-    Favorites: { screen: m.Favorites },
+    Saved: { screen: m.Saved },
     Details: { screen: m.RestaurantDetail },
   },
   {
@@ -46,7 +46,7 @@ export default TabNavigator(
   {
     Nearby: { screen: RestaurantsStack },
     Search: { screen: SearchStack },
-    Favorites: { screen: FavoritesStack },
+    Saved: { screen: SavedStack },
   },
   {
     navigationOptions: ({ navigation }) => ({
@@ -58,7 +58,7 @@ export default TabNavigator(
           case 'Nearby':
             iconName = `ios-pin${focused ? '' : '-outline'}`;
             break;
-          case 'Favorites':
+          case 'Saved':
             iconName = `ios-restaurant${focused ? '' : '-outline'}`;
             break;
           case 'Search':

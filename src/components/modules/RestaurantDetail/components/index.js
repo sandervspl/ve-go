@@ -2,10 +2,14 @@ import styled from 'styled-components';
 import { LinearGradient } from 'expo';
 import * as c from '../../../common';
 
-export { RatingCircle } from './RatingCircle';
+export { RatingCircleContainer } from './RatingCircleContainer';
 export { Reviews } from './Reviews';
 export { Review } from './Review';
 export { VenueDetails } from './VenueDetails';
+export { OpenTimeText } from './OpenTimeText';
+export { ContactButtons } from './ContactButtons';
+export { RatingText } from './RatingText';
+export { RatingCircle } from './RatingCircle';
 
 export const BigImageHeaderContainer = styled.View`
   width: 100%;
@@ -71,6 +75,7 @@ export const CircleTextContainer = styled.View`
 `;
 
 export const CircleText = styled.Text`
+  height: ${props => props.small ? 20 : 'auto'}; 
   color: ${({ theme, small }) => small ? theme.color.darkGray : theme.color.black};
   font-size: ${props => props.small ? 17 : 30}px;
   ${props => props.bold && 'font-weight: bold'};

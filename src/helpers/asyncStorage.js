@@ -3,7 +3,7 @@ import { AsyncStorage } from 'react-native';
 class AsyncStorageHelper {
   suffix = '@VeganGo:';
   keys = {
-    favorites: 'favorites',
+    saved: 'saved',
   };
 
   getItem = async (key) => {
@@ -34,18 +34,18 @@ class AsyncStorageHelper {
     }
   };
 
-  favorite = async (placeId) => {
+  save = async (placeId) => {
     try {
-      const favorites = await this.getFavorites();
+      const saved = await this.getSaved();
 
-      if (favorites) {
-        const newFavorites = [...favorites, placeId];
-        await this.setItem(this.keys.favorites, newFavorites);
+      if (saved) {
+        const newSaved = [...saved, placeId];
+        await this.setItem(this.keys.saved, newSaved);
 
         return true;
       }
 
-      await this.setItem(this.keys.favorites, [placeId]);
+      await this.setItem(this.keys.saved, [placeId]);
 
       return true;
     } catch (e) {
@@ -55,13 +55,13 @@ class AsyncStorageHelper {
     }
   };
 
-  unfavorite = async (placeId) => {
+  unsave = async (placeId) => {
     try {
-      const favorites = await this.getFavorites();
+      const saved = await this.getSaved();
 
-      if (favorites) {
-        const newFavorites = favorites.filter(fav => fav.place_id !== placeId);
-        await this.setItem(this.keys.favorites, newFavorites);
+      if (saved) {
+        const newSaved = saved.filter(fav => fav.place_id !== placeId);
+        await this.setItem(this.keys.saved, newSaved);
 
         return true;
       }
@@ -74,15 +74,15 @@ class AsyncStorageHelper {
     }
   };
 
-  getFavorites = async () => {
+  getSaved = async () => {
     try {
-      const favorites = await this.getItem(this.keys.favorites);
+      const saved = await this.getItem(this.keys.saved);
 
-      if (!favorites) {
+      if (!saved) {
         return false;
       }
 
-      return favorites.sort((a, b) => a.name > b.name);
+      return saved.sort((a, b) => a.name > b.name);
     } catch (e) {
       console.log(e);
 
@@ -90,15 +90,15 @@ class AsyncStorageHelper {
     }
   };
 
-  isFavorited = async (placeId) => {
+  isSaved = async (placeId) => {
     try {
-      const favorites = await this.getFavorites();
+      const saved = await this.getSaved();
 
-      if (!favorites || (Array.isArray(favorites) && favorites.length === 0)) {
+      if (!saved || (Array.isArray(saved) && saved.length === 0)) {
         return false;
       }
 
-      return !!favorites.find(fav => fav.place_id === placeId);
+      return !!saved.find(fav => fav.place_id === placeId);
     } catch (e) {
       console.log(e);
 
