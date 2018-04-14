@@ -25,7 +25,6 @@ class Restaurants extends React.Component {
   state = {
     error: null,
     loading: true,
-    refreshing: false,
     restaurantData: [],
     lat: null,
     lon: null,
@@ -88,7 +87,7 @@ class Restaurants extends React.Component {
   }
 
   // store app state in component state when it changed
-  getNearbyRestaurants = _.throttle(async () => {
+  getNearbyRestaurants = async () => {
     // do not execute API calls when locating is not ready or app is not active
     if (this.state.appState.match(/inactive|background/)) {
       return;
@@ -117,8 +116,8 @@ class Restaurants extends React.Component {
       return;
     }
 
-    this.fetchNearbyRestaurants();
-  }, 10000);
+    await this.fetchNearbyRestaurants();
+  };
 
   // start location watcher
   getCurrentPosition = async () => {
@@ -137,13 +136,18 @@ class Restaurants extends React.Component {
       this.setState({ address: { name, place_id: data.place_id } });
 
       await this.watchPositionSuccess(loc);
+      await this.getNearbyRestaurants();
     }
   };
 
   // get nearby venues with current location
-  fetchNearbyRestaurants = async () => {
+  fetchNearbyRestaurants = _.throttle(async () => {
     try {
-      this.setState({ loading: true, error: null });
+      this.setState({
+        loading: true,
+        error: null,
+        restaurantData: [],
+      });
 
       const { lat, lon } = this.state;
       const queries = qs.stringify({ lat, lon });
@@ -177,7 +181,7 @@ class Restaurants extends React.Component {
         },
       });
     }
-  };
+  }, 10000);
 
   // values: active/inactive/background
   handleAppStateChange = (nextAppState) => {
@@ -194,17 +198,19 @@ class Restaurants extends React.Component {
   };
 
   handleRefresh = async () => {
-    this.setState({ refreshing: true });
+    this.setState({ loading: true });
     await this.getCurrentPosition();
-    this.setState({ refreshing: false });
+    this.setState({ loading: false });
   };
 
-  watchPositionSuccess = async ({ coords }) => {
-    this.setState({
-      lat: coords.latitude,
-      lon: coords.longitude,
-    }, await this.getNearbyRestaurants);
-  };
+  watchPositionSuccess = async ({ coords }) => (
+    new Promise((resolve) => {
+      this.setState({
+        lat: coords.latitude,
+        lon: coords.longitude,
+      }, resolve);
+    })
+  );
 
   // navigate to detail page with data we already have
   // fetch all data on details page
@@ -219,7 +225,7 @@ class Restaurants extends React.Component {
 
   refreshController = () => (
     <RefreshControl
-      refreshing={this.state.loading || this.state.refreshing}
+      refreshing={this.state.loading}
       onRefresh={this.handleRefresh}
     />
   );
