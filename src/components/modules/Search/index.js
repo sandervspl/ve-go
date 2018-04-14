@@ -41,7 +41,7 @@ class Search extends React.Component {
   search = _.debounce(async () => {
     if (!this.props.app.online) {
       this.setState({
-        results: null,
+        loading: false,
         error: {
           emoji: '☹️',
           text: 'Cannot search while offline.',
@@ -77,6 +77,7 @@ class Search extends React.Component {
       if (data == null) {
         this.setState({
           loading: false,
+          results: null,
           error: {
             emoji: '🤷🏻‍♂',
             text: '️Unable to find that address.',
@@ -140,13 +141,14 @@ class Search extends React.Component {
               onChangeText={this.handleOnChange}
               placeholder="Vegan restaurants in cities"
               style={{ marginBottom: 10 }}
+              clearButtonMode="while-editing"
             />
 
             {address != null && <c.SmallTitle>Results for {address}</c.SmallTitle>}
           </c.PaddedView>
 
           {error && (
-            <c.CenterView>
+            <c.CenterView spaced>
               <c.Error>
                 <c.Emoji big>{error.emoji}</c.Emoji>
                 <Text>{error.text}</Text>
