@@ -121,22 +121,26 @@ class Restaurants extends React.Component {
 
   // start location watcher
   getCurrentPosition = async () => {
-    const loc = await Location.getCurrentPositionAsync({ enableHighAccuracy: true });
+    try {
+      const loc = await Location.getCurrentPositionAsync({ enableHighAccuracy: true });
 
-    // get an address for our position
-    const { latitude: lat, longitude: lon } = loc.coords;
-    const uri = 'https://maps.googleapis.com/maps/api/geocode/json';
-    const response = await fetch(`${uri}?latlng=${lat},${lon}&key=${GOOGLE_MAPS_KEY}`);
-    const result = await response.json();
-    const data = result && result.results && result.results[0];
+      // get an address for our position
+      const { latitude: lat, longitude: lon } = loc.coords;
+      const uri = 'https://maps.googleapis.com/maps/api/geocode/json';
+      const response = await fetch(`${uri}?latlng=${lat},${lon}&key=${GOOGLE_MAPS_KEY}`);
+      const result = await response.json();
+      const data = result && result.results && result.results[0];
 
-    if (data && data.place_id !== this.state.address.place_id) {
-      const route = data.address_components.find(a => a.types.includes('route'));
-      const name = route ? route.long_name : data.formatted_address;
-      this.setState({ address: { name, place_id: data.place_id } });
+      if (data && data.place_id !== this.state.address.place_id) {
+        const route = data.address_components.find(a => a.types.includes('route'));
+        const name = route ? route.long_name : data.formatted_address;
+        this.setState({ address: { name, place_id: data.place_id } });
 
-      await this.watchPositionSuccess(loc);
-      await this.getNearbyRestaurants();
+        await this.watchPositionSuccess(loc);
+        await this.getNearbyRestaurants();
+      }
+    } catch (e) {
+      this.handleUnknownError();
     }
   };
 
@@ -157,13 +161,7 @@ class Restaurants extends React.Component {
       if (data.error) {
         console.log(data);
 
-        this.setState({
-          loading: false,
-          error: {
-            emoji: '☹️',
-            text: 'Something went wrong getting nearby restaurants.',
-          },
-        });
+        this.handleUnknownError();
       } else {
         this.setState({
           restaurantData: data,
@@ -173,13 +171,7 @@ class Restaurants extends React.Component {
     } catch (e) {
       console.log(e);
 
-      this.setState({
-        loading: false,
-        error: {
-          emoji: '☹️',
-          text: 'Something went wrong getting nearby restaurants.',
-        },
-      });
+      this.handleUnknownError();
     }
   }, 10000);
 
@@ -220,6 +212,16 @@ class Restaurants extends React.Component {
     this.props.navigation.navigate('Details', {
       preFetchData: data,
       location: { lat, lon },
+    });
+  };
+
+  handleUnknownError = () => {
+    this.setState({
+      loading: false,
+      error: {
+        emoji: '☹️',
+        text: 'Something went wrong getting nearby restaurants.',
+      },
     });
   };
 
