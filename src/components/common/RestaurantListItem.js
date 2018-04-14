@@ -51,9 +51,9 @@ export class RestaurantListItem extends React.Component {
 
             {data.opening_hours && data.opening_hours.open_now != null && (
               <c.ListItemText
-                light={!pressed}
                 pressed={pressed}
-                style={{ color: isOpen ? theme.color.green : theme.color.red }}
+                green={!pressed && isOpen}
+                red={!pressed && !isOpen}
               >
                 {isOpen ? 'Open' : 'Closed'}
               </c.ListItemText>

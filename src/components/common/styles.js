@@ -14,6 +14,8 @@ export const listItemTextColor = {
   default: theme.color.black,
   pressed: theme.color.white,
   light: theme.color.lightgray,
+  red: theme.color.red,
+  green: theme.color.green,
 };
 
 export const listItemTitleColor = {
