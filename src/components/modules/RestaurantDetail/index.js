@@ -39,7 +39,7 @@ class RestaurantDetail extends React.Component {
   }
 
   onMapsClick = () => {
-    Linking.openURL(this.props.data.url)
+    Linking.openURL(this.state.data.url)
       .catch(e => console.log(e));
   };
 
@@ -176,7 +176,9 @@ class RestaurantDetail extends React.Component {
             </mc.InnerImageContainer>
           </mc.BigImageHeaderContainer>
 
-          {data != null && <mc.VenueDetails data={data} location={location} onMapsClick={this.onMapsClick} />}
+          {data != null && data.url && (
+            <mc.VenueDetails data={data} location={location} onMapsClick={this.onMapsClick} />
+          )}
 
           {data != null && <mc.Reviews data={data.reviews} />}
         </c.ScrollContainer>
